@@ -10,6 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ['3.10', '3.11', '3.12']
     steps:
@@ -20,5 +21,33 @@ jobs:
           cache: pip
       - run: python -m pip install --upgrade pip
       - run: pip install -e '.[all,dev]'
-      - run: pytest -q
       - run: ruff check .
+      - run: pytest -q
+      - run: python -c 'from myotrace.benchmark import benchmark_synthetic; r=benchmark_synthetic(); assert r.passed, r'
+      - run: python -m build
+
+  research-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e '.[all,dev]'
+      - run: python - <<'PY'
+          from fusion.model import FeatureReference, FusionConfig, calculate_index
+          cfg = FusionConfig(references={
+              'mechanical:beat_rate_bpm': FeatureReference(60, 120),
+              'electrical:fpd_ms': FeatureReference(100, 200),
+              'molecular:MYH7_MYH6_ratio': FeatureReference(0.2, 2.0),
+          })
+          r = calculate_index('CI', {
+              'mechanical:beat_rate_bpm': 120,
+              'electrical:fpd_ms': 200,
+              'molecular:MYH7_MYH6_ratio': 2.0,
+          }, cfg)
+          assert r.composite_score == 100.0
+          assert r.confidence == 1.0
+          assert r.coherence_score == 1.0
+        PY
