@@ -13,18 +13,22 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("video", type=Path, help="AVI/MP4/MOV video or TIFF stack")
     p.add_argument("--sample-id", default=None)
     p.add_argument("--fps", type=float, default=None, help="Override acquisition frame rate")
-    p.add_argument("--method", choices=["farneback", "lk"], default="farneback")
+    p.add_argument("--method", choices=["farneback", "lk", "ensemble"], default="farneback")
     p.add_argument("--motion-percentile", type=float, default=75.0)
     p.add_argument("--out", type=Path, default=Path("myotrace-output"))
     p.add_argument("--raw-signal", action="store_true", help="Disable robust preprocessing before kinetics")
     p.add_argument("--allow-qc-fail", action="store_true", help="Process data even when frame-level QC flags it")
+    p.add_argument("--correct-motion", action="store_true", help="Apply conservative global translation correction")
     return p
 
 
 def main() -> int:
     args = build_parser().parse_args()
     cfg = FlowConfig(method=args.method, motion_percentile=args.motion_percentile)
-    result = analyze_video(args.video, sample_id=args.sample_id, fps_override=args.fps, flow_config=cfg, reject_failed_qc=not args.allow_qc_fail, robust=not args.raw_signal)
+    result = analyze_video(
+        args.video, sample_id=args.sample_id, fps_override=args.fps, flow_config=cfg,
+        reject_failed_qc=not args.allow_qc_fail, robust=not args.raw_signal, correct_motion=args.correct_motion,
+    )
     args.out.mkdir(parents=True, exist_ok=True)
     result.trace.to_csv(args.out / "motion_trace.csv", index=False)
     result.beats.to_csv(args.out / "beat_metrics.csv", index=False)
