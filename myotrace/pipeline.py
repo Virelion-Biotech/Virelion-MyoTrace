@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from .flow import FlowConfig, optical_flow_trace
@@ -36,7 +37,7 @@ def analyze_video(
     if reject_failed_qc and not qc.usable:
         raise ValueError(f"Video failed QC: {', '.join(qc.reasons)}")
     motion = optical_flow_trace(source.frames, flow_config)
-    times = __import__("numpy").arange(motion.size, dtype=float) / fps
+    times = np.arange(motion.size, dtype=float) / fps
     beats = analyze_trace(motion, fps)
     sid = sample_id or path.stem
     beat_table = beats_to_frame_table(beats, sid)
