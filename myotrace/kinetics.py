@@ -33,10 +33,10 @@ def prepare_signal(signal: np.ndarray, fps: float, *, low_hz: float = 0.25, high
     if x.size < max(20, int(fps * 1.5)):
         raise ValueError("Signal is too short for reliable beat kinetics")
     if not np.all(np.isfinite(x)):
-        med = float(np.nanmedian(x))
-        if not np.isfinite(med):
+        finite = x[np.isfinite(x)]
+        if finite.size == 0:
             raise ValueError("Signal contains no finite values")
-        x = np.nan_to_num(x, nan=med, posinf=med, neginf=med)
+        x = np.nan_to_num(x, nan=float(np.median(finite)), posinf=float(np.max(finite)), neginf=float(np.min(finite)))
     nyq = 0.5 * fps
     low = max(low_hz / nyq, 1e-4)
     high = min(high_hz / nyq, 0.98)
@@ -46,45 +46,63 @@ def prepare_signal(signal: np.ndarray, fps: float, *, low_hz: float = 0.25, high
     return filtfilt(b, a, x)
 
 
-def _crossing_time(x: np.ndarray, start: int, stop: int, level: float, fps: float) -> float:
+def _first_crossing_down(x: np.ndarray, start: int, stop: int, level: float, fps: float) -> float:
+    if stop <= start:
+        return np.nan
     idx = np.flatnonzero(x[start:stop] <= level)
     return float(idx[0] / fps) if idx.size else np.nan
 
 
+def _last_crossing_up(x: np.ndarray, start: int, stop: int, level: float, fps: float) -> float:
+    if stop <= start:
+        return np.nan
+    idx = np.flatnonzero(x[start:stop] <= level)
+    return float((idx[-1]) / fps) if idx.size else np.nan
+
+
 def analyze_trace(signal: np.ndarray, fps: float, *, prominence_fraction: float = 0.12, min_bpm: float = 30.0, max_bpm: float = 240.0) -> list[BeatMetrics]:
-    """Extract beat-level mechanical kinetics with morphology-aware metrics."""
+    """Extract beat-level mechanical kinetics with conservative quality scoring."""
     x = prepare_signal(signal, fps)
     span = float(np.percentile(x, 95) - np.percentile(x, 5))
     prominence = max(span * prominence_fraction, np.finfo(float).eps)
     distance = max(1, int(np.floor(fps * 60.0 / max_bpm)))
     peaks, properties = find_peaks(x, prominence=prominence, distance=distance)
     out: list[BeatMetrics] = []
-    for i, peak in enumerate(peaks):
-        interval = float((peak - peaks[i - 1]) / fps) if i else np.nan
+    expected_interval = float(np.median(np.diff(peaks)) / fps) if len(peaks) >= 3 else np.nan
+    for peak in peaks:
+        previous = peaks[peaks < peak]
+        interval = float((peak - previous[-1]) / fps) if previous.size else np.nan
         bpm = float(60.0 / interval) if np.isfinite(interval) and interval > 0 else np.nan
         if np.isfinite(bpm) and not (min_bpm <= bpm <= max_bpm):
             continue
-        half_window = max(2, int(0.55 * fps))
-        left = max(0, peak - half_window)
-        right = min(x.size, peak + half_window)
+        window = max(2, int(0.55 * fps))
+        left = max(0, peak - window)
+        right = min(x.size, peak + window)
         local = x[left:right]
         baseline = float(np.percentile(local, 15))
         amplitude = float(max(x[peak] - baseline, 0.0))
         if amplitude <= 0:
             continue
-        onset_candidates, _ = find_peaks(-x[left:peak + 1], distance=max(1, int(0.08 * fps)))
+        onset_level = baseline + 0.20 * amplitude
+        half_level = baseline + 0.50 * amplitude
+        offset_level = baseline + 0.80 * amplitude
+        onset_candidates = np.flatnonzero(x[left:peak + 1] <= onset_level)
         onset = left + int(onset_candidates[-1]) if onset_candidates.size else left
         rise = float((peak - onset) / fps)
-        threshold = baseline + 0.2 * amplitude
-        relaxation = _crossing_time(x, peak, right, threshold, fps)
-        width50 = float(peak_widths(x, [peak], rel_height=0.5)[0][0] / fps)
-        hi = min(right, peak + int(round(max(interval if np.isfinite(interval) else 1.0, 0.5) * fps)))
-        area = float(np.trapezoid(np.abs(x[onset:hi] - baseline), dx=1.0 / fps)) if hi > onset else 0.0
-        expected = np.nanmedian(np.diff(peaks) / fps) if len(peaks) > 2 else np.nan
-        regularity = float(np.exp(-abs(interval - expected) / expected)) if np.isfinite(expected) and expected > 0 and np.isfinite(interval) else 0.5
-        relax_component = relaxation if np.isfinite(relaxation) else rise
-        morphology = float(np.clip(1.0 - abs(rise - relax_component) / max(rise + relax_component, 1e-6), 0, 1))
-        quality = float(np.clip(0.65 * regularity + 0.35 * morphology, 0, 1))
+        relaxation = _first_crossing_down(x, peak, right, onset_level, fps)
+        width50 = np.nan
+        if peak > 0 and peak < x.size - 1:
+            try:
+                width50 = float(peak_widths(x, [peak], rel_height=0.5)[0][0] / fps)
+            except (ValueError, IndexError):
+                width50 = np.nan
+        end = min(right, peak + int(round(max(interval if np.isfinite(interval) else 1.0, 0.5) * fps)))
+        area = float(np.trapezoid(np.abs(x[onset:end] - baseline), dx=1.0 / fps)) if end > onset else 0.0
+        regularity = float(np.exp(-abs(interval - expected_interval) / expected_interval)) if np.isfinite(expected_interval) and expected_interval > 0 and np.isfinite(interval) else 0.5
+        morphology = float(np.clip(1.0 - abs(rise - (relaxation if np.isfinite(relaxation) else rise)) / max(rise + (relaxation if np.isfinite(relaxation) else rise), 1e-6), 0, 1))
+        prominence_value = float(properties.get("prominences", np.array([0.0]))[list(peaks).index(peak)]) if len(properties.get("prominences", [])) == len(peaks) else span
+        prominence_score = float(np.clip(prominence_value / max(span, np.finfo(float).eps), 0, 1))
+        quality = float(np.clip(0.50 * regularity + 0.30 * morphology + 0.20 * prominence_score, 0, 1))
         out.append(BeatMetrics(len(out), peak / fps, interval, bpm, amplitude, rise, relaxation, rise, baseline, width50, area, quality))
     return out
 
@@ -100,8 +118,9 @@ def beats_to_frame_table(beats: list[BeatMetrics], sample_id: str) -> pd.DataFra
 
 
 def summarize_beats(beats: list[BeatMetrics]) -> dict[str, float]:
+    keys = ["n_beats", "mean_bpm", "sd_bpm", "cv_bpm", "mean_amplitude", "mean_rise_time_s", "mean_relaxation_time_s", "mean_width_50_s", "mean_area_abs", "mean_beat_quality", "regularity_index"]
     if not beats:
-        return {k: np.nan for k in ["n_beats", "mean_bpm", "sd_bpm", "cv_bpm", "mean_amplitude", "mean_rise_time_s", "mean_relaxation_time_s", "mean_width_50_s", "mean_area_abs", "mean_beat_quality", "regularity_index"]}
+        return {k: np.nan for k in keys}
     bpm = np.asarray([b.beat_rate_bpm for b in beats], dtype=float)
     intervals = np.asarray([b.interval_s for b in beats], dtype=float)
     mean_bpm = float(np.nanmean(bpm))
