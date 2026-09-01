@@ -4,20 +4,21 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "virelion-myotrace"
-version = "0.2.0"
-description = "Research-grade video cardiac mechanics analysis and auditable multimodal tissue maturity fusion."
+version = "0.3.0"
+description = "Reproducible video cardiac mechanics analysis and auditable multimodal tissue maturity fusion."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{name = "Virelion-Biotech"}]
 license = {text = "GNU Affero General Public License v3.0"}
-keywords = ["cardiac", "contractility", "EHT", "organoid", "optical-flow", "maturation", "mechanobiology", "multimodal"]
+keywords = ["cardiac", "contractility", "EHT", "organoid", "optical-flow", "maturation", "mechanobiology", "multimodal", "reproducibility"]
 classifiers = ["Programming Language :: Python :: 3", "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)"]
 dependencies = ["numpy>=1.24", "pandas>=2.0", "scipy>=1.10"]
 
 [project.optional-dependencies]
 video = ["opencv-python-headless>=4.8"]
 tiff = ["tifffile>=2023.8"]
-all = ["opencv-python-headless>=4.8", "tifffile>=2023.8"]
+report = ["matplotlib>=3.8"]
+all = ["opencv-python-headless>=4.8", "tifffile>=2023.8", "matplotlib>=3.8"]
 dev = ["pytest>=8", "ruff>=0.6", "build>=1.2"]
 
 [project.scripts]
