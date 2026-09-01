@@ -9,7 +9,9 @@ import pandas as pd
 from .flow import FlowConfig, optical_flow_trace
 from .io import load_tiff_stack, load_video
 from .kinetics import analyze_trace, beats_to_frame_table, summarize_beats
+from .provenance import build_provenance
 from .qc import QCReport, assess_frames
+from .robust import assess_signal_quality, robust_preprocess, spectral_features
 
 
 @dataclass(frozen=True)
@@ -19,6 +21,7 @@ class VideoAnalysis:
     summary: dict[str, float]
     beats: pd.DataFrame
     trace: pd.DataFrame
+    provenance: dict[str, object]
 
 
 def analyze_video(
@@ -28,8 +31,9 @@ def analyze_video(
     fps_override: float | None = None,
     flow_config: FlowConfig | None = None,
     reject_failed_qc: bool = False,
+    robust: bool = True,
 ) -> VideoAnalysis:
-    """Run loading -> QC -> optical flow -> beat kinetics as one reproducible pipeline."""
+    """Run loading, image QC, motion extraction, signal QC, kinetics and provenance."""
     path = Path(path)
     source = load_tiff_stack(path) if path.suffix.lower() in {".tif", ".tiff"} else load_video(path)
     fps = float(fps_override or source.fps)
@@ -37,11 +41,22 @@ def analyze_video(
     if reject_failed_qc and not qc.usable:
         raise ValueError(f"Video failed QC: {', '.join(qc.reasons)}")
     motion = optical_flow_trace(source.frames, flow_config)
+    analysis_signal = robust_preprocess(motion, fps) if robust else motion
+    signal_qc = assess_signal_quality(analysis_signal, fps)
     times = np.arange(motion.size, dtype=float) / fps
-    beats = analyze_trace(motion, fps)
+    beats = analyze_trace(analysis_signal, fps)
     sid = sample_id or path.stem
     beat_table = beats_to_frame_table(beats, sid)
-    trace = pd.DataFrame({"sample_id": sid, "timestamp_s": times, "motion_index": motion, "modality": "mechanical"})
+    trace = pd.DataFrame({"sample_id": sid, "timestamp_s": times, "motion_index": motion, "analysis_signal": analysis_signal, "modality": "mechanical"})
     summary = summarize_beats(beats)
-    summary.update({"qc_usable": float(qc.usable), "qc_motion_fraction": qc.motion_fraction})
-    return VideoAnalysis(sid, qc, summary, beat_table, trace)
+    summary.update({
+        "qc_usable": float(qc.usable),
+        "qc_motion_fraction": qc.motion_fraction,
+        "signal_quality": signal_qc.quality_score,
+        "signal_snr_db": signal_qc.snr_db,
+        "signal_periodicity": signal_qc.periodicity,
+        "dominant_frequency_hz": signal_qc.dominant_frequency_hz,
+        **{f"spectral_{k}": v for k, v in spectral_features(analysis_signal, fps).items()},
+    })
+    prov = build_provenance(path, version="0.2.0", parameters={"fps": fps, "flow": repr(flow_config), "robust": robust})
+    return VideoAnalysis(sid, qc, summary, beat_table, trace, prov.__dict__)
