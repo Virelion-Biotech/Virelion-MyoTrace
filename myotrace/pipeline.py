@@ -9,6 +9,7 @@ import pandas as pd
 from .flow import FlowConfig, optical_flow_trace
 from .io import load_tiff_stack, load_video
 from .kinetics import analyze_trace, beats_to_frame_table, summarize_beats
+from .morphology import beat_templates
 from .motion_correction import MotionCorrectionReport, correct_global_translation
 from .provenance import build_provenance
 from .qc import QCReport, assess_frames
@@ -64,6 +65,15 @@ def analyze_video(
         "signal_periodicity": signal_qc.periodicity, "dominant_frequency_hz": signal_qc.dominant_frequency_hz,
         **{f"spectral_{k}": v for k, v in spectral_features(analysis_signal, fps).items()},
     })
+    if len(beats) >= 3:
+        _, morphology_stability, morphology_dispersion = beat_templates(
+            analysis_signal, beat_table["peak_time_s"].to_numpy(), fps
+        )
+        summary["morphology_stability"] = morphology_stability
+        summary["morphology_dispersion"] = morphology_dispersion
+    else:
+        summary["morphology_stability"] = np.nan
+        summary["morphology_dispersion"] = np.nan
     if correction is not None:
         summary.update({
             "motion_correction_failed_fraction": correction.failed_fraction,
