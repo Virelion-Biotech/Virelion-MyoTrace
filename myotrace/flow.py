@@ -17,40 +17,29 @@ class FlowConfig:
     poly_n: int = 5
     poly_sigma: float = 1.2
     motion_percentile: float = 75.0
+    ensemble_weight_lk: float = 0.5
 
 
 def _farneback_signal(frames: np.ndarray, config: FlowConfig) -> np.ndarray:
     try:
         import cv2
-    except ImportError as exc:  # pragma: no cover
+    except ImportError as exc:
         raise RuntimeError("OpenCV is required for optical flow; install the 'video' extra.") from exc
     x = normalize_frames(frames)
     out = np.empty(x.shape[0] - 1, dtype=np.float64)
     prev = x[0]
     for i in range(1, x.shape[0]):
-        curr = x[i]
-        flow = cv2.calcOpticalFlowFarneback(
-            prev,
-            curr,
-            None,
-            config.pyr_scale,
-            config.levels,
-            config.winsize,
-            config.iterations,
-            config.poly_n,
-            config.poly_sigma,
-            0,
-        )
+        flow = cv2.calcOpticalFlowFarneback(prev, x[i], None, config.pyr_scale, config.levels, config.winsize, config.iterations, config.poly_n, config.poly_sigma, 0)
         mag, _ = cv2.cartToPolar(flow[..., 0], flow[..., 1])
         out[i - 1] = float(np.percentile(mag, config.motion_percentile))
-        prev = curr
+        prev = x[i]
     return out
 
 
 def _lk_signal(frames: np.ndarray, config: FlowConfig) -> np.ndarray:
     try:
         import cv2
-    except ImportError as exc:  # pragma: no cover
+    except ImportError as exc:
         raise RuntimeError("OpenCV is required for optical flow; install the 'video' extra.") from exc
     x = (normalize_frames(frames) * 255).astype(np.uint8)
     features = cv2.goodFeaturesToTrack(x[0], maxCorners=300, qualityLevel=0.01, minDistance=5)
@@ -75,11 +64,17 @@ def _lk_signal(frames: np.ndarray, config: FlowConfig) -> np.ndarray:
     return np.nan_to_num(out, nan=0.0)
 
 
-def optical_flow_trace(frames: np.ndarray, config: FlowConfig | None = None) -> np.ndarray:
-    """Convert a grayscale frame stack into a 1-D motion-intensity signal.
+def _zscore(x: np.ndarray) -> np.ndarray:
+    x = np.asarray(x, dtype=float)
+    return (x - np.mean(x)) / max(np.std(x), np.finfo(float).eps)
 
-    This is a *motion index*, not calibrated force. Force/stress requires an instrumented
-    geometry or calibration model (for example pillar deflection or EHT force transducer data).
+
+def optical_flow_trace(frames: np.ndarray, config: FlowConfig | None = None) -> np.ndarray:
+    """Convert frames into a motion-intensity signal.
+
+    ``ensemble`` combines independently computed Farneback and Lucas–Kanade traces after robust
+    scaling. This is intended as a consensus signal, not as a claim of superior accuracy until
+    validated against an external ground truth.
     """
     validate_frame_stack(frames)
     cfg = config or FlowConfig()
@@ -88,6 +83,11 @@ def optical_flow_trace(frames: np.ndarray, config: FlowConfig | None = None) -> 
         return _farneback_signal(frames, cfg)
     if method in {"lk", "lucas-kanade", "lucaskanade"}:
         return _lk_signal(frames, cfg)
+    if method == "ensemble":
+        farneback = _zscore(_farneback_signal(frames, cfg))
+        lk = _zscore(_lk_signal(frames, cfg))
+        w = float(np.clip(cfg.ensemble_weight_lk, 0.0, 1.0))
+        return (1.0 - w) * farneback + w * lk
     raise ValueError(f"Unknown optical-flow method: {cfg.method!r}")
 
 
