@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from .flow import FlowConfig
 from .pipeline import analyze_video
 
 
@@ -12,6 +13,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--sample-id", default=None)
     p.add_argument("--fps", type=float, default=None, help="Override acquisition frame rate")
     p.add_argument("--method", choices=["farneback", "lk"], default="farneback")
+    p.add_argument("--motion-percentile", type=float, default=75.0)
     p.add_argument("--out", type=Path, default=Path("myotrace-output"))
     p.add_argument("--allow-qc-fail", action="store_true", help="Process data even when QC flags it")
     return p
@@ -19,10 +21,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> int:
     args = build_parser().parse_args()
+    cfg = FlowConfig(method=args.method, motion_percentile=args.motion_percentile)
     result = analyze_video(
         args.video,
         sample_id=args.sample_id,
         fps_override=args.fps,
+        flow_config=cfg,
         reject_failed_qc=not args.allow_qc_fail,
     )
     args.out.mkdir(parents=True, exist_ok=True)
