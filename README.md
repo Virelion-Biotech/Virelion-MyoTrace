@@ -172,7 +172,7 @@ print(result.to_dict())
 
 ## Research status
 
-The repository is engineered for serious research use, but **Nature-level publication is not a software feature**. The missing ingredient is empirical evidence: independent recordings, matched multimodal constructs, blinded comparison, ground-truth force calibration, test/retest data, external validation and a preregistered statistical analysis plan.
+The repository is engineered for serious research use. The missing ingredient is empirical evidence: independent recordings, matched multimodal constructs, blinded comparison, ground-truth force calibration, test/retest data, external validation and a preregistered statistical analysis plan.
 
 That distinction is intentional. MyoTrace is being built so those experiments can be executed and audited cleanly rather than encoded after the fact.
 
