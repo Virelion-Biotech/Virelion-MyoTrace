@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Iterable
 
 import numpy as np
-from scipy.signal import detrend, hilbert, medfilt, welch
+from scipy.signal import detrend, medfilt, welch
 
 
 @dataclass(frozen=True)
@@ -23,7 +23,8 @@ def _finite(x: np.ndarray) -> np.ndarray:
     x = np.asarray(x, dtype=float).reshape(-1)
     if x.size == 0:
         raise ValueError("signal is empty")
-    if np.all(np.isfinite(x)):
+    missing = ~np.isfinite(x)
+    if not missing.any():
         return x
     med = np.nanmedian(x)
     if not np.isfinite(med):
@@ -35,7 +36,8 @@ def robust_preprocess(signal: Iterable[float], fps: float, *, median_kernel_s: f
     """Prepare a motion trace while preserving beat-scale morphology."""
     if fps <= 0:
         raise ValueError("fps must be positive")
-    x = _finite(np.asarray(list(signal), dtype=float))
+    raw = np.asarray(list(signal), dtype=float)
+    x = _finite(raw)
     if x.size < 9:
         raise ValueError("signal is too short")
     k = max(3, int(round(median_kernel_s * fps)) | 1)
@@ -44,7 +46,7 @@ def robust_preprocess(signal: Iterable[float], fps: float, *, median_kernel_s: f
     if k >= 3:
         x = medfilt(x, kernel_size=k)
     x = detrend(x, type="linear")
-    scale = np.nanpercentile(np.abs(x), 95)
+    scale = float(np.nanpercentile(np.abs(x), 95))
     return x / scale if scale > 0 else x
 
 
@@ -61,11 +63,14 @@ def spectral_features(signal: Iterable[float], fps: float, *, min_hz: float = 0.
     idx = int(np.argmax(p))
     prob = p / max(float(np.sum(p)), np.finfo(float).eps)
     entropy = float(-np.sum(prob * np.log(prob + 1e-12)) / np.log(max(2, len(prob))))
-    return {"dominant_frequency_hz": float(f[idx]), "spectral_entropy": entropy, "band_power": float(np.trapezoid(p, f))}
+    band_power = float(np.trapz(p, f)) if len(f) > 1 else float(p[0])
+    return {"dominant_frequency_hz": float(f[idx]), "spectral_entropy": entropy, "band_power": band_power}
 
 
 def assess_signal_quality(signal: Iterable[float], fps: float) -> SignalQuality:
-    x = _finite(np.asarray(list(signal), dtype=float))
+    raw = np.asarray(list(signal), dtype=float).reshape(-1)
+    missing_fraction = float(np.mean(~np.isfinite(raw))) if raw.size else 1.0
+    x = _finite(raw)
     if fps <= 0:
         raise ValueError("fps must be positive")
     spec = spectral_features(x, fps)
@@ -77,13 +82,14 @@ def assess_signal_quality(signal: Iterable[float], fps: float) -> SignalQuality:
     slope = float(np.polyfit(np.arange(x.size), x, 1)[0])
     drift = abs(slope) * x.size / (np.std(x) + 1e-9)
     span = np.ptp(x)
-    clipped = float(np.mean((x <= np.min(x) + span * 1e-6) | (x >= np.max(x) - span * 1e-6))) if span else 1.0
+    clipping = float(np.mean((x <= np.min(x) + span * 1e-6) | (x >= np.max(x) - span * 1e-6))) if span else 1.0
     flags: list[str] = []
     if snr_db < 6: flags.append("low_snr")
     if periodicity < 0.05: flags.append("weak_periodicity")
     if drift > 0.25: flags.append("residual_drift")
-    if clipped > 0.05: flags.append("possible_clipping")
+    if clipping > 0.05: flags.append("possible_clipping")
+    if missing_fraction > 0: flags.append("missing_or_nonfinite_samples")
     if not np.isfinite(spec["dominant_frequency_hz"]): flags.append("no_dominant_frequency")
     q = float(np.clip((snr_db - 3) / 12, 0, 1)) * float(np.clip((periodicity + 0.1) / 0.6, 0, 1))
-    q *= float(np.clip(1 - drift, 0, 1)) * float(np.clip(1 - clipped * 5, 0, 1))
-    return SignalQuality(snr_db, periodicity, spec["dominant_frequency_hz"], drift, clipped, 0.0, q, tuple(flags))
+    q *= float(np.clip(1 - drift, 0, 1)) * float(np.clip(1 - clipping * 5, 0, 1)) * (1 - missing_fraction)
+    return SignalQuality(snr_db, periodicity, spec["dominant_frequency_hz"], drift, clipping, missing_fraction, q, tuple(flags))
