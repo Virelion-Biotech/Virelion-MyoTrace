@@ -4,7 +4,7 @@ from dataclasses import asdict, dataclass
 
 import numpy as np
 import pandas as pd
-from scipy.signal import butter, find_peaks, filtfilt
+from scipy.signal import butter, filtfilt, find_peaks, peak_widths
 
 
 @dataclass(frozen=True)
@@ -26,45 +26,38 @@ class BeatMetrics:
         return asdict(self)
 
 
-def _bandpass(signal: np.ndarray, fps: float, low_hz: float, high_hz: float) -> np.ndarray:
-    nyq = 0.5 * fps
-    high = min(high_hz / nyq, 0.98)
-    low = max(low_hz / nyq, 1e-4)
-    if low >= high or x := np.array([]):
-        return signal - np.nanmedian(signal)
-    b, a = butter(3, [low, high], btype="band")
-    return filtfilt(b, a, signal)
-
-
 def prepare_signal(signal: np.ndarray, fps: float, *, low_hz: float = 0.25, high_hz: float = 8.0) -> np.ndarray:
     x = np.asarray(signal, dtype=np.float64).reshape(-1)
+    if fps <= 0:
+        raise ValueError("fps must be positive")
     if x.size < max(20, int(fps * 1.5)):
         raise ValueError("Signal is too short for reliable beat kinetics")
     if not np.all(np.isfinite(x)):
         med = float(np.nanmedian(x))
+        if not np.isfinite(med):
+            raise ValueError("Signal contains no finite values")
         x = np.nan_to_num(x, nan=med, posinf=med, neginf=med)
-    b, a = butter(3, [max(low_hz / (0.5 * fps), 1e-4), min(high_hz / (0.5 * fps), 0.98)], btype="band")
+    nyq = 0.5 * fps
+    low = max(low_hz / nyq, 1e-4)
+    high = min(high_hz / nyq, 0.98)
+    if low >= high:
+        return x - np.median(x)
+    b, a = butter(3, [low, high], btype="band")
     return filtfilt(b, a, x)
 
 
-def _crossing_time(x: np.ndarray, start: int, stop: int, level: float, fps: float, direction: str) -> float:
-    segment = x[start:stop]
-    if direction == "up":
-        idx = np.flatnonzero(segment >= level)
-    else:
-        idx = np.flatnonzero(segment <= level)
+def _crossing_time(x: np.ndarray, start: int, stop: int, level: float, fps: float) -> float:
+    idx = np.flatnonzero(x[start:stop] <= level)
     return float(idx[0] / fps) if idx.size else np.nan
 
 
 def analyze_trace(signal: np.ndarray, fps: float, *, prominence_fraction: float = 0.12, min_bpm: float = 30.0, max_bpm: float = 240.0) -> list[BeatMetrics]:
     """Extract beat-level mechanical kinetics with morphology-aware metrics."""
-    if fps <= 0:
-        raise ValueError("fps must be positive")
     x = prepare_signal(signal, fps)
     span = float(np.percentile(x, 95) - np.percentile(x, 5))
     prominence = max(span * prominence_fraction, np.finfo(float).eps)
     distance = max(1, int(np.floor(fps * 60.0 / max_bpm)))
-    peaks, props = find_peaks(x, prominence=prominence, distance=distance)
+    peaks, properties = find_peaks(x, prominence=prominence, distance=distance)
     out: list[BeatMetrics] = []
     for i, peak in enumerate(peaks):
         interval = float((peak - peaks[i - 1]) / fps) if i else np.nan
@@ -83,19 +76,14 @@ def analyze_trace(signal: np.ndarray, fps: float, *, prominence_fraction: float 
         onset = left + int(onset_candidates[-1]) if onset_candidates.size else left
         rise = float((peak - onset) / fps)
         threshold = baseline + 0.2 * amplitude
-        relaxation = _crossing_time(x, peak, right, threshold, fps, "down")
-        width50 = np.nan
-        try:
-            from scipy.signal import peak_widths
-            width50 = float(peak_widths(x, [peak], rel_height=0.5)[0][0] / fps)
-        except Exception:
-            pass
-        lo = onset
-        hi = min(right, onset + max(1, int(round(max(interval if np.isfinite(interval) else 1.0, 0.5) * fps))))
-        area = float(np.trapezoid(np.abs(x[lo:hi] - baseline), dx=1.0 / fps)) if hi > lo else 0.0
+        relaxation = _crossing_time(x, peak, right, threshold, fps)
+        width50 = float(peak_widths(x, [peak], rel_height=0.5)[0][0] / fps)
+        hi = min(right, peak + int(round(max(interval if np.isfinite(interval) else 1.0, 0.5) * fps)))
+        area = float(np.trapezoid(np.abs(x[onset:hi] - baseline), dx=1.0 / fps)) if hi > onset else 0.0
         expected = np.nanmedian(np.diff(peaks) / fps) if len(peaks) > 2 else np.nan
         regularity = float(np.exp(-abs(interval - expected) / expected)) if np.isfinite(expected) and expected > 0 and np.isfinite(interval) else 0.5
-        morphology = float(np.clip(1.0 - abs(rise - (relaxation if np.isfinite(relaxation) else rise)) / max(rise + (relaxation if np.isfinite(relaxation) else rise), 1e-6), 0, 1))
+        relax_component = relaxation if np.isfinite(relaxation) else rise
+        morphology = float(np.clip(1.0 - abs(rise - relax_component) / max(rise + relax_component, 1e-6), 0, 1))
         quality = float(np.clip(0.65 * regularity + 0.35 * morphology, 0, 1))
         out.append(BeatMetrics(len(out), peak / fps, interval, bpm, amplitude, rise, relaxation, rise, baseline, width50, area, quality))
     return out
@@ -113,10 +101,11 @@ def beats_to_frame_table(beats: list[BeatMetrics], sample_id: str) -> pd.DataFra
 
 def summarize_beats(beats: list[BeatMetrics]) -> dict[str, float]:
     if not beats:
-        return {"n_beats": 0.0, "mean_bpm": np.nan, "sd_bpm": np.nan, "cv_bpm": np.nan, "mean_amplitude": np.nan, "mean_rise_time_s": np.nan, "mean_relaxation_time_s": np.nan, "mean_width_50_s": np.nan, "mean_area_abs": np.nan, "mean_beat_quality": np.nan, "regularity_index": np.nan}
-    bpm = np.array([b.beat_rate_bpm for b in beats], dtype=float)
-    intervals = np.array([b.interval_s for b in beats], dtype=float)
+        return {k: np.nan for k in ["n_beats", "mean_bpm", "sd_bpm", "cv_bpm", "mean_amplitude", "mean_rise_time_s", "mean_relaxation_time_s", "mean_width_50_s", "mean_area_abs", "mean_beat_quality", "regularity_index"]}
+    bpm = np.asarray([b.beat_rate_bpm for b in beats], dtype=float)
+    intervals = np.asarray([b.interval_s for b in beats], dtype=float)
     mean_bpm = float(np.nanmean(bpm))
+    mean_interval = float(np.nanmean(intervals))
     return {
         "n_beats": float(len(beats)),
         "mean_bpm": mean_bpm,
@@ -128,5 +117,5 @@ def summarize_beats(beats: list[BeatMetrics]) -> dict[str, float]:
         "mean_width_50_s": float(np.nanmean([b.width_50_s for b in beats])),
         "mean_area_abs": float(np.nanmean([b.area_abs for b in beats])),
         "mean_beat_quality": float(np.nanmean([b.beat_quality for b in beats])),
-        "regularity_index": float(1.0 - np.nanstd(intervals, ddof=1) / np.nanmean(intervals)) if np.sum(np.isfinite(intervals)) > 1 and np.nanmean(intervals) > 0 else np.nan,
+        "regularity_index": float(np.clip(1.0 - np.nanstd(intervals, ddof=1) / mean_interval, 0, 1)) if len(intervals) > 1 and mean_interval > 0 else np.nan,
     }
