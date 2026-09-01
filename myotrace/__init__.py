@@ -1,7 +1,12 @@
-"""Virelion-MyoTrace: video-based cardiac contractility analysis and multimodal fusion."""
+"""Virelion-MyoTrace: quantitative cardiac mechanics and multimodal tissue characterization."""
 
-from .kinetics import BeatMetrics, analyze_trace
-from .pipeline import analyze_video
+from .kinetics import BeatMetrics, analyze_trace, summarize_beats
+from .pipeline import VideoAnalysis, analyze_video
+from .robust import SignalQuality, assess_signal_quality, robust_preprocess
+from .uncertainty import BootstrapSummary, bootstrap_mean
 
-__all__ = ["BeatMetrics", "analyze_trace", "analyze_video"]
-__version__ = "0.1.0"
+__all__ = [
+    "BeatMetrics", "VideoAnalysis", "analyze_trace", "analyze_video", "summarize_beats",
+    "SignalQuality", "assess_signal_quality", "robust_preprocess", "BootstrapSummary", "bootstrap_mean",
+]
+__version__ = "0.2.0"
