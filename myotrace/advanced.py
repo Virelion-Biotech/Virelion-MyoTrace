@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, asdict
 
 import numpy as np
-from scipy.signal import correlate, find_peaks, welch
+from scipy.signal import correlate, welch
 
 
 @dataclass(frozen=True)
