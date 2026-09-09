@@ -53,13 +53,6 @@ def _first_crossing_down(x: np.ndarray, start: int, stop: int, level: float, fps
     return float(idx[0] / fps) if idx.size else np.nan
 
 
-def _last_crossing_up(x: np.ndarray, start: int, stop: int, level: float, fps: float) -> float:
-    if stop <= start:
-        return np.nan
-    idx = np.flatnonzero(x[start:stop] <= level)
-    return float((idx[-1]) / fps) if idx.size else np.nan
-
-
 def analyze_trace(signal: np.ndarray, fps: float, *, prominence_fraction: float = 0.12, min_bpm: float = 30.0, max_bpm: float = 240.0) -> list[BeatMetrics]:
     """Extract beat-level mechanical kinetics with conservative quality scoring."""
     x = prepare_signal(signal, fps)
@@ -84,8 +77,6 @@ def analyze_trace(signal: np.ndarray, fps: float, *, prominence_fraction: float 
         if amplitude <= 0:
             continue
         onset_level = baseline + 0.20 * amplitude
-        half_level = baseline + 0.50 * amplitude
-        offset_level = baseline + 0.80 * amplitude
         onset_candidates = np.flatnonzero(x[left:peak + 1] <= onset_level)
         onset = left + int(onset_candidates[-1]) if onset_candidates.size else left
         rise = float((peak - onset) / fps)
