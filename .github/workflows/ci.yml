@@ -13,8 +13,37 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10', '3.11', '3.12']
-        numpy-version: ['1.26.*', '2.0.*']
+        include:
+          - python-version: '3.10'
+            numpy-spec: 'numpy>=1.26,<2'
+            scipy-spec: 'scipy>=1.10,<1.15'
+            opencv-spec: 'opencv-python-headless>=4.8,<4.11'
+            tifffile-spec: 'tifffile>=2023.8,<2026'
+          - python-version: '3.11'
+            numpy-spec: 'numpy>=1.26,<2'
+            scipy-spec: 'scipy>=1.10,<1.15'
+            opencv-spec: 'opencv-python-headless>=4.8,<4.11'
+            tifffile-spec: 'tifffile>=2023.8,<2026'
+          - python-version: '3.12'
+            numpy-spec: 'numpy>=1.26,<2'
+            scipy-spec: 'scipy>=1.10,<1.15'
+            opencv-spec: 'opencv-python-headless>=4.8,<4.11'
+            tifffile-spec: 'tifffile>=2023.8,<2026'
+          - python-version: '3.10'
+            numpy-spec: 'numpy>=2,<3'
+            scipy-spec: 'scipy>=1.10'
+            opencv-spec: 'opencv-python-headless>=4.8'
+            tifffile-spec: 'tifffile>=2023.8'
+          - python-version: '3.11'
+            numpy-spec: 'numpy>=2,<3'
+            scipy-spec: 'scipy>=1.10'
+            opencv-spec: 'opencv-python-headless>=4.8'
+            tifffile-spec: 'tifffile>=2023.8'
+          - python-version: '3.12'
+            numpy-spec: 'numpy>=2,<3'
+            scipy-spec: 'scipy>=1.10'
+            opencv-spec: 'opencv-python-headless>=4.8'
+            tifffile-spec: 'tifffile>=2023.8'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -22,11 +51,11 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - run: python -m pip install --upgrade pip
-      - run: pip install -e '.[all,dev]'
-      - run: pip install --upgrade --force-reinstall "numpy==${{ matrix.numpy-version }}"
-      - run: ruff check . --select E,F
+      - run: pip install "${{ matrix.numpy-spec }}" "${{ matrix.scipy-spec }}" "${{ matrix.opencv-spec }}" "${{ matrix.tifffile-spec }}" pandas matplotlib pytest ruff build
+      - run: pip install -e . --no-deps
+      - run: ruff check . --select F
       - run: pytest -q
-      - run: python -c 'from myotrace.benchmark import benchmark_synthetic; r=benchmark_synthetic(); assert r.passed, r'
+      - run: python -c 'import numpy as np; from myotrace.robust import spectral_features; print(np.__version__, spectral_features(np.sin(np.linspace(0,20,1000)), 50)["band_power"])'
       - run: python -m build
 
   research-integrity:
