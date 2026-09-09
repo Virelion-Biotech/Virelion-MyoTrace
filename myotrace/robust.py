@@ -7,6 +7,12 @@ import numpy as np
 from scipy.signal import detrend, medfilt, welch
 
 
+try:
+    _trapz = np.trapezoid  # NumPy >= 2.0
+except AttributeError:  # pragma: no cover - exercised on NumPy < 2.0
+    _trapz = np.trapz
+
+
 @dataclass(frozen=True)
 class SignalQuality:
     snr_db: float
@@ -63,7 +69,7 @@ def spectral_features(signal: Iterable[float], fps: float, *, min_hz: float = 0.
     idx = int(np.argmax(p))
     prob = p / max(float(np.sum(p)), np.finfo(float).eps)
     entropy = float(-np.sum(prob * np.log(prob + 1e-12)) / np.log(max(2, len(prob))))
-    band_power = float(np.trapz(p, f)) if len(f) > 1 else float(p[0])
+    band_power = float(_trapz(p, f)) if len(f) > 1 else float(p[0])
     return {"dominant_frequency_hz": float(f[idx]), "spectral_entropy": entropy, "band_power": band_power}
 
 
