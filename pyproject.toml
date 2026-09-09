@@ -23,6 +23,7 @@ dev = ["pytest>=8", "ruff>=0.6", "build>=1.2"]
 
 [project.scripts]
 myotrace = "myotrace.cli:main"
+myotrace-hearttwin = "myotrace.hearttwin_adapter:main"
 
 [tool.setuptools.packages.find]
 include = ["myotrace*", "fusion*"]
