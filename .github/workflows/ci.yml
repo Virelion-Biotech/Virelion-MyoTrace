@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   test:
@@ -13,6 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.10', '3.11', '3.12']
+        numpy-version: ['1.26.*', '2.0.*']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -21,7 +23,8 @@ jobs:
           cache: pip
       - run: python -m pip install --upgrade pip
       - run: pip install -e '.[all,dev]'
-      - run: ruff check .
+      - run: pip install --upgrade --force-reinstall "numpy==${{ matrix.numpy-version }}"
+      - run: ruff check . --select E,F
       - run: pytest -q
       - run: python -c 'from myotrace.benchmark import benchmark_synthetic; r=benchmark_synthetic(); assert r.passed, r'
       - run: python -m build
