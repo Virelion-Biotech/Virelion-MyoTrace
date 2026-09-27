@@ -46,6 +46,14 @@ def prepare_signal(signal: np.ndarray, fps: float, *, low_hz: float = 0.25, high
     return filtfilt(b, a, x)
 
 
+def _integrate_trapezoid(values: np.ndarray, *, dx: float) -> float:
+    """Compatibility wrapper for NumPy 1.26 and 2.x."""
+    trapezoid = getattr(np, "trapezoid", None)
+    if trapezoid is not None:
+        return float(trapezoid(values, dx=dx))
+    return float(np.trapz(values, dx=dx))
+
+
 def _first_crossing_down(x: np.ndarray, start: int, stop: int, level: float, fps: float) -> float:
     if stop <= start:
         return np.nan
@@ -88,7 +96,7 @@ def analyze_trace(signal: np.ndarray, fps: float, *, prominence_fraction: float 
             except (ValueError, IndexError):
                 width50 = np.nan
         end = min(right, peak + int(round(max(interval if np.isfinite(interval) else 1.0, 0.5) * fps)))
-        area = float(np.trapezoid(np.abs(x[onset:end] - baseline), dx=1.0 / fps)) if end > onset else 0.0
+        area = _integrate_trapezoid(np.abs(x[onset:end] - baseline), dx=1.0 / fps) if end > onset else 0.0
         regularity = float(np.exp(-abs(interval - expected_interval) / expected_interval)) if np.isfinite(expected_interval) and expected_interval > 0 and np.isfinite(interval) else 0.5
         morphology = float(np.clip(1.0 - abs(rise - (relaxation if np.isfinite(relaxation) else rise)) / max(rise + (relaxation if np.isfinite(relaxation) else rise), 1e-6), 0, 1))
         prominence_value = float(properties.get("prominences", np.array([0.0]))[list(peaks).index(peak)]) if len(properties.get("prominences", [])) == len(peaks) else span
