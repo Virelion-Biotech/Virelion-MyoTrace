@@ -11,8 +11,10 @@ def test_trace_qc_detects_flat_signal():
 
 
 def test_cross_correlation_alignment():
-    x = np.sin(np.linspace(0, 20, 500))
-    y = np.roll(x, 7)
+    rng = np.random.default_rng(7)
+    x = rng.normal(size=500)
+    y = np.zeros_like(x)
+    y[7:] = x[:-7]
     lag, corr = cross_correlation_lag(x, y)
     assert abs(lag) == 7
     assert corr > 0.95
