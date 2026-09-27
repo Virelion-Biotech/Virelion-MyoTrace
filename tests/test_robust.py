@@ -1,5 +1,3 @@
-import numpy as np
-
 from myotrace.robust import assess_signal_quality, robust_preprocess, spectral_features
 from myotrace.synthetic import cardiac_motion
 
