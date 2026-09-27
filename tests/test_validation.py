@@ -1,5 +1,3 @@
-import numpy as np
-
 from fusion.model import FeatureReference, FusionConfig, calculate_index
 from fusion.validation import compare_groups, leave_one_modality_out
 
