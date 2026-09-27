@@ -19,5 +19,6 @@ def test_partial_modality_is_explicit() -> None:
     refs = {"mechanical:mean_bpm": FeatureReference(60, 120)}
     result = calculate_index("x", {"mechanical:mean_bpm": 90}, FusionConfig(refs))
     assert 0 < result.composite_score < 100
-    assert result.status == "partial"
+    assert result.status == "low_coverage"
     assert result.coverage == 1 / 3
+    assert result.coverage < FusionConfig(refs).minimum_modality_coverage
