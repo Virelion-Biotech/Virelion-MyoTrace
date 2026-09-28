@@ -31,7 +31,9 @@ class FeatureReference:
         if a == f:
             return 0.5
         raw = (v - f) / (a - f)
-        score = raw if self.higher_is_mature else 1.0 - raw
+        # The signed adult - fetal denominator already encodes direction.
+        # higher_is_mature remains metadata for backwards compatibility.
+        score = raw
         return float(np.clip(score, 0.0, 1.0))
 
 
