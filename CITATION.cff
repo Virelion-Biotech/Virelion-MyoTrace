@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: "Virelion-MyoTrace"
+message: "Please cite Virelion-MyoTrace when using the software in research."
+type: software
+license: AGPL-3.0-only
+version: 0.2.0
+date-released: 2026-09-01
+repository-code: "https://github.com/Virelion-Biotech/Virelion-MyoTrace"
+authors:
+  - name: "Virelion-Biotech"
+    affiliation: "Virelion-Biotech"
+keywords:
+  - cardiac
+  - contractility
+  - mechanobiology
+  - EHT
+  - organoid
+  - optical flow
+  - multimodal
+  - maturation
