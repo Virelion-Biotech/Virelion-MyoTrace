@@ -7,11 +7,28 @@ JSON-serializable result to stdout.
 from __future__ import annotations
 
 import json
+import math
 import os
 import sys
 
 from .flow import FlowConfig
 from .pipeline import analyze_video
+
+
+def _json_safe(value):
+    """Normalize command output to strict RFC-compliant JSON values."""
+    if isinstance(value, dict):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    if isinstance(value, float):
+        return value if math.isfinite(value) else None
+    if hasattr(value, "item"):
+        try:
+            return _json_safe(value.item())
+        except (TypeError, ValueError):
+            pass
+    return value
 
 
 def _find_input_path(payload: dict) -> tuple[str, dict]:
@@ -57,7 +74,7 @@ def main() -> int:
             },
             "provenance": result.provenance,
         }
-        print(json.dumps(output, allow_nan=True))
+        print(json.dumps(_json_safe(output), allow_nan=False, default=str))
         return 0
     except Exception as exc:  # noqa: BLE001 - convert to HeartTwin error contract
         print(str(exc), file=sys.stderr)
