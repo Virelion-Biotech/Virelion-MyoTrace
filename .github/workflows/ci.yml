@@ -86,10 +86,16 @@ jobs:
           PY
 
       - run: python scripts/validate_cpu.py --out validation-ci/synthetic
+      - run: python scripts/validate_recovery_cpu.py --out validation-ci/recovery
+        env:
+          OPENBLAS_NUM_THREADS: 1
+          OMP_NUM_THREADS: 1
       - uses: actions/upload-artifact@v4
         with:
           name: cpu-analytical-validation
-          path: validation-ci/synthetic
+          path: |
+            validation-ci/synthetic
+            validation-ci/recovery
 
   public-inputs:
     runs-on: ubuntu-latest
@@ -101,6 +107,9 @@ jobs:
           cache: pip
       - run: pip install -e '.[video,tiff]'
       - run: python scripts/validate_public_videos.py --out validation-ci/public
+        env:
+          OPENBLAS_NUM_THREADS: 1
+          OMP_NUM_THREADS: 1
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -37,18 +37,25 @@ def run(manifest_path, data, out):
         if digest != source["sha256"]:
             raise ValueError(f"Source checksum mismatch: {path}")
         loaded = load_tiff_stack(path)
-        for method in ("farneback", "lk", "ensemble"):
+        for method, mode in (
+            ("farneback", "motion"),
+            ("lk", "motion"),
+            ("ensemble", "motion"),
+            ("farneback", "signed_displacement"),
+        ):
+            label = method if mode == "motion" else "signed_displacement"
             try:
-                result = analyze_video(path, flow_config=FlowConfig(method=method))
-                second = analyze_video(path, flow_config=FlowConfig(method=method))
+                result = analyze_video(path, flow_config=FlowConfig(method=method), signal_mode=mode)
+                second = analyze_video(path, flow_config=FlowConfig(method=method), signal_mode=mode)
                 np.testing.assert_array_equal(result.trace.motion_index, second.trace.motion_index)
-                stem = path.stem + "_" + method
+                stem = path.stem + "_" + label
                 result.trace.to_csv(out / (stem + "_trace.csv"), index=False)
                 result.beats.to_csv(out / (stem + "_events.csv"), index=False)
                 rows.append(
                     dict(
                         movie=source["name"],
-                        method=method,
+                        method=label,
+                        signal_mode=mode,
                         shape=list(loaded.frames.shape),
                         fps=loaded.fps,
                         executed=True,
@@ -59,10 +66,10 @@ def run(manifest_path, data, out):
                     )
                 )
             except Exception as exc:
-                rows.append(dict(movie=source["name"], method=method, executed=False, error=str(exc)))
+                rows.append(dict(movie=source["name"], method=label, signal_mode=mode, executed=False, error=str(exc)))
     agreement = []
     for source in manifest["movies"]:
-        selected = [r for r in rows if r["movie"] == source["name"] and r["executed"]]
+        selected = [r for r in rows if r["movie"] == source["name"] and r["executed"] and r["signal_mode"] == "motion"]
         rates = {r["method"]: r["summary"]["mean_bpm"] for r in selected}
         finite = [v for v in rates.values() if np.isfinite(v)]
         span = max(finite) - min(finite) if finite else None
@@ -94,6 +101,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", type=Path, default=Path("validation/cpu/public_sources.json"))
     parser.add_argument("--data", type=Path, default=Path("/tmp/myotrace-public-videos"))
-    parser.add_argument("--out", type=Path, default=Path("validation/cpu/public"))
+    parser.add_argument("--out", type=Path, default=Path("validation/cpu/recovery/public"))
     args = parser.parse_args()
     run(args.manifest, args.data, args.out)

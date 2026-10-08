@@ -44,6 +44,9 @@ def main() -> int:
         result = analyze_video(
             video_path,
             sample_id=payload.get("entity_id"),
+            signal_mode=params.get("signal_mode", "motion"),
+            detector=params.get("detector", "noise_aware"),
+            reference_frame=params.get("reference_frame", 0),
             fps_override=params.get("fps"),
             flow_config=cfg,
             reject_failed_qc=not params.get("allow_qc_fail", False),

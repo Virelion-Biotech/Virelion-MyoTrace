@@ -1,5 +1,7 @@
 # Virelion-MyoTrace
 
+**0.5.0:** CPU accuracy recovery adds noise-aware detection and an optional signed displacement path. See [paired recovery results and remaining failures](docs/ACCURACY_RECOVERY.md).
+
 MyoTrace is a Python toolkit for extracting quantitative motion and beat-level mechanical features from cardiac-cell or tissue video and TIFF data. It also provides optional multimodal feature fusion.
 
 ## What it contains
@@ -33,6 +35,7 @@ CLI:
 myotrace recording.mp4 --sample-id EHT_001 --out results/
 myotrace recording.mp4 --method ensemble --correct-motion --out results/
 myotrace recording.tif --fps 100 --roi 0 0 128 128 --out results/
+myotrace recording.tif --fps 100 --signal-mode signed_displacement --out displacement-results/
 ```
 
 Python:
@@ -60,7 +63,7 @@ TIFF frame rates come from ImageJ `finterval`/`fps` or OME `TimeIncrement` metad
 
 **Outputs:** motion traces, beat metrics, contraction/relaxation measurements, spectral/QC features, calibration results, multimodal feature tables, summaries, and provenance records. Typical files include `motion_trace.csv`, `beat_metrics.csv`, `summary.json`, `provenance.json`, and `qc.txt`.
 
-Raw Farneback and Lucas–Kanade traces are pixel displacement magnitudes per frame interval; timestamps are interval midpoints. Ensemble traces are standardized consensus values, and robust preprocessing normalizes amplitudes. These amplitudes are not directly comparable across preprocessing modes or recording frame rates.
+Raw Farneback and Lucas–Kanade traces are pixel displacement magnitudes per frame interval; timestamps are interval midpoints. Ensemble traces are standardized consensus values, and robust preprocessing normalizes amplitudes. Signed displacement has N frame-timestamp samples and retains direction; its principal-mode polarity is not a verified physiological contraction direction. The default noise-aware detector uses explicit 40 ms Gaussian smoothing and a residual-noise prominence floor; `--detector legacy` retains the prior detector. These amplitudes are not directly comparable across preprocessing modes or recording frame rates.
 
 The legacy `beat_metrics.csv`, `n_beats`, and `mean_bpm` fields describe **detected motion events**. Unsigned optical flow can have separate contraction and relaxation peaks: a 60-cycle/min generated recording gives approximately 120 motion events/min. Outputs explicitly mark `measurement_status=motion_events_not_verified_cardiac_beats`. Do not interpret these as verified cardiac rate or physiological contraction/relaxation kinetics without a reference for your acquisition.
 
@@ -73,12 +76,13 @@ Reproduce the CPU analytical checks:
 ```bash
 pip install -e '.[all,dev]'
 pytest -q
-python scripts/validate_cpu.py
+python scripts/validate_cpu.py --out /tmp/myotrace-analytical
+OPENBLAS_NUM_THREADS=1 python scripts/validate_recovery_cpu.py
 # Downloads three checksum-pinned external hiPSC-CM movies (~307 MB):
-python scripts/validate_public_videos.py
+OPENBLAS_NUM_THREADS=1 python scripts/validate_public_videos.py
 ```
 
-Full reports, failed cases, source hashes, and public input identifiers are in `validation/cpu/`. Public data are fetched from their source and retain the original dataset terms. CI checks six Python/NumPy combinations, the analytical grid, public-video execution, and an installed wheel outside the checkout.
+Full reports, failed cases, source hashes, and public input identifiers are in `validation/cpu/`; 0.4 reports are historical, while 0.5 recovery evidence is under `validation/cpu/recovery/`. Public data are fetched from their source and retain the original dataset terms. CI checks six Python/NumPy combinations, the analytical grid, public-video execution, and an installed wheel outside the checkout.
 
 ## Limitations
 

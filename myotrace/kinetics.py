@@ -4,6 +4,7 @@ from dataclasses import asdict, dataclass
 
 import numpy as np
 import pandas as pd
+from scipy.ndimage import gaussian_filter1d
 from scipy.signal import butter, filtfilt, find_peaks, peak_widths
 
 
@@ -65,7 +66,13 @@ def _first_crossing_down(x: np.ndarray, start: int, stop: int, level: float, fps
 
 
 def analyze_trace(
-    signal: np.ndarray, fps: float, *, prominence_fraction: float = 0.12, min_bpm: float = 30.0, max_bpm: float = 240.0
+    signal: np.ndarray,
+    fps: float,
+    *,
+    prominence_fraction: float = 0.12,
+    min_bpm: float = 30.0,
+    max_bpm: float = 240.0,
+    detector: str = "noise_aware",
 ) -> list[BeatMetrics]:
     """Extract beat-level mechanical kinetics with conservative quality scoring."""
     if (
@@ -74,9 +81,14 @@ def analyze_trace(
         or not 0 < min_bpm < max_bpm
     ):
         raise ValueError("Require 0 < prominence_fraction <= 1 and 0 < min_bpm < max_bpm")
-    x = prepare_signal(signal, fps)
+    if detector not in {"noise_aware", "legacy"}:
+        raise ValueError("detector must be noise_aware or legacy")
+    filtered = prepare_signal(signal, fps)
+    x = gaussian_filter1d(filtered, sigma=0.04 * fps, mode="nearest") if detector == "noise_aware" else filtered
+    residual = filtered - x
+    noise = 1.4826 * np.median(np.abs(residual - np.median(residual)))
     span = float(np.percentile(x, 95) - np.percentile(x, 5))
-    prominence = max(span * prominence_fraction, np.finfo(float).eps)
+    prominence = max(span * prominence_fraction, 5.0 * noise, np.finfo(float).eps)
     distance = max(1, int(np.floor(fps * 60.0 / max_bpm)))
     peaks, properties = find_peaks(x, prominence=prominence, distance=distance)
     out: list[BeatMetrics] = []

@@ -3,7 +3,7 @@ title: "Virelion-MyoTrace"
 message: "Please cite Virelion-MyoTrace when using the software in research."
 type: software
 license: AGPL-3.0-or-later
-version: 0.4.0
+version: 0.5.0
 date-released: 2026-10-08
 repository-code: "https://github.com/Virelion-Biotech/Virelion-MyoTrace"
 authors:

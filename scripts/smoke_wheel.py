@@ -13,7 +13,7 @@ import tifffile
 import myotrace
 from fusion.model import FeatureReference, FusionConfig, calculate_index
 
-assert myotrace.__version__ == "0.4.0"
+assert myotrace.__version__ == "0.5.0"
 with tempfile.TemporaryDirectory() as directory:
     root = Path(directory)
     a = np.random.default_rng(17).integers(20, 235, (64, 64), dtype=np.uint8)
@@ -32,6 +32,10 @@ with tempfile.TemporaryDirectory() as directory:
     tifffile.imwrite(path, frames, photometric="minisblack", metadata={"axes": "TYX"})
     result = myotrace.analyze_video(path, fps_override=40)
     assert len(result.trace) == 239
+    signed = myotrace.analyze_video(path, fps_override=40, signal_mode="signed_displacement")
+    assert len(signed.trace) == 240
+    assert abs(signed.summary["mean_bpm"] - 60) < 3
+    assert signed.summary["displacement_explained_variance"] > 0.95
     subprocess.run(
         [sys.executable, "-m", "myotrace.cli", str(path), "--fps", "40", "--out", str(root / "output")], check=True
     )

@@ -148,5 +148,5 @@ def validate(out: Path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--out", type=Path, default=Path("validation/cpu/current"))
+    parser.add_argument("--out", type=Path, default=Path("/tmp/myotrace-analytical-validation"))
     validate(parser.parse_args().out)

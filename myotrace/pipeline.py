@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 
 from ._version import __version__
+from .displacement import signed_displacement_trace
 from .flow import FlowConfig, optical_flow_trace
 from .io import load_tiff_stack, load_video
 from .kinetics import analyze_trace, beats_to_frame_table, summarize_beats
@@ -41,8 +42,13 @@ def analyze_video(
     roi: ROI | None = None,
     mask: np.ndarray | None = None,
     correct_motion: bool = False,
+    signal_mode: str = "motion",
+    detector: str = "noise_aware",
+    reference_frame: int = 0,
 ) -> VideoAnalysis:
     """Run loading, ROI selection, optional rigid-motion correction, QC, mechanics and provenance."""
+    if signal_mode not in {"motion", "signed_displacement"}:
+        raise ValueError("signal_mode must be motion or signed_displacement")
     path = Path(path)
     source = load_tiff_stack(path) if path.suffix.lower() in {".tif", ".tiff"} else load_video(path)
     fps_value = source.fps if fps_override is None else fps_override
@@ -61,14 +67,20 @@ def analyze_video(
         qc = replace(qc, usable=False, reasons=(*qc.reasons, "motion_correction_failed"))
     if reject_failed_qc and not qc.usable:
         raise ValueError(f"Video failed QC: {', '.join(qc.reasons)}")
-    motion = optical_flow_trace(frames, cfg, mask=mask)
+    displacement = None
+    if signal_mode == "signed_displacement":
+        displacement = signed_displacement_trace(frames, cfg, mask=mask, reference_frame=reference_frame)
+        motion = displacement.signal
+    else:
+        motion = optical_flow_trace(frames, cfg, mask=mask)
     analysis_signal = robust_preprocess(motion, fps) if robust else motion
     signal_qc = assess_signal_quality(analysis_signal, fps)
-    times = (np.arange(motion.size, dtype=float) + 0.5) / fps
-    beats = analyze_trace(analysis_signal, fps)
+    offset = 0.0 if displacement is not None else 0.5
+    times = (np.arange(motion.size, dtype=float) + offset) / fps
+    beats = analyze_trace(analysis_signal, fps, detector=detector)
     sid = sample_id or path.stem
     # Optical flow measures intervals; kinetics use their midpoint timestamps.
-    beats = [replace(b, peak_time_s=b.peak_time_s + 0.5 / fps) for b in beats]
+    beats = [replace(b, peak_time_s=b.peak_time_s + offset / fps) for b in beats]
     beat_table = beats_to_frame_table(beats, sid)
     trace = pd.DataFrame(
         {
@@ -81,7 +93,19 @@ def analyze_video(
     )
     summary = summarize_beats(beats)
     summary["measurement_status"] = "motion_events_not_verified_cardiac_beats"
-    summary["motion_units"] = "standardized_consensus" if cfg.method == "ensemble" else "pixels_per_frame"
+    summary["signal_mode"] = signal_mode
+    summary["detector"] = detector
+    summary["motion_units"] = (
+        "pixels_principal_displacement"
+        if displacement is not None
+        else ("standardized_consensus" if cfg.method.lower() == "ensemble" else "pixels_per_frame")
+    )
+    if displacement is not None:
+        summary["measurement_status"] = "displacement_cycles_not_verified_cardiac_beats"
+        summary["displacement_explained_variance"] = displacement.explained_variance_fraction
+        summary["displacement_flags"] = list(displacement.flags)
+        summary["displacement_spatial_samples"] = displacement.spatial_samples
+        summary["displacement_polarity"] = "largest_loading_positive_not_verified_systole"
     summary["kinetics_units"] = "normalized_motion_index" if robust else summary["motion_units"]
     summary["signal_flags"] = list(signal_qc.flags)
     summary.update(
@@ -97,7 +121,7 @@ def analyze_video(
     )
     if len(beats) >= 3:
         _, morphology_stability, morphology_dispersion = beat_templates(
-            analysis_signal, beat_table["peak_time_s"].to_numpy() - 0.5 / fps, fps
+            analysis_signal, beat_table["peak_time_s"].to_numpy() - offset / fps, fps
         )
         summary["morphology_stability"] = morphology_stability
         summary["morphology_dispersion"] = morphology_dispersion
@@ -125,7 +149,12 @@ def analyze_video(
             "mask_sha256": hashlib.sha256(np.asarray(mask, dtype=bool).tobytes()).hexdigest()
             if mask is not None
             else None,
-            "timestamp_convention": "frame_interval_midpoint",
+            "timestamp_convention": "frame_timestamp" if displacement is not None else "frame_interval_midpoint",
+            "signal_mode": signal_mode,
+            "reference_frame": reference_frame if displacement is not None else None,
+            "detector": detector,
+            "detection_gaussian_sigma_s": 0.04 if detector == "noise_aware" else 0,
+            "detection_noise_prominence_multiplier": 5 if detector == "noise_aware" else 0,
             "reject_failed_qc": reject_failed_qc,
         },
     )

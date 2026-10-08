@@ -18,6 +18,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--sample-id", default=None)
     p.add_argument("--fps", type=float, default=None, help="Override acquisition frame rate")
     p.add_argument("--method", choices=["farneback", "lk", "ensemble"], default="farneback")
+    p.add_argument("--signal-mode", choices=["motion", "signed_displacement"], default="motion")
+    p.add_argument("--detector", choices=["noise_aware", "legacy"], default="noise_aware")
+    p.add_argument("--reference-frame", type=int, default=0)
     p.add_argument("--motion-percentile", type=float, default=75.0)
     p.add_argument("--roi", type=int, nargs=4, metavar=("X", "Y", "WIDTH", "HEIGHT"))
     p.add_argument("--out", type=Path, default=Path("myotrace-output"))
@@ -33,6 +36,9 @@ def main() -> int:
     result = analyze_video(
         args.video,
         sample_id=args.sample_id,
+        signal_mode=args.signal_mode,
+        detector=args.detector,
+        reference_frame=args.reference_frame,
         fps_override=args.fps,
         flow_config=cfg,
         reject_failed_qc=not args.allow_qc_fail,
@@ -53,6 +59,7 @@ def main() -> int:
         f"usable={result.qc.usable}\nreasons={','.join(result.qc.reasons)}\nfps={result.qc.fps}\nframes={result.qc.frame_count}\n",
         encoding="utf-8",
     )
+    print(f"measurement_status={result.summary['measurement_status']}")
     print(f"sample={result.sample_id}")
     print(f"beats={int(result.summary['n_beats'])}")
     print(f"mean_bpm={result.summary['mean_bpm']:.3f}")
