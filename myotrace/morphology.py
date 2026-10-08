@@ -9,7 +9,9 @@ def _resample(x: np.ndarray, n: int = 100) -> np.ndarray:
     return np.interp(target, t, x)
 
 
-def beat_templates(signal: np.ndarray, peak_times_s: np.ndarray, fps: float, *, n_points: int = 100) -> tuple[np.ndarray, float, float]:
+def beat_templates(
+    signal: np.ndarray, peak_times_s: np.ndarray, fps: float, *, n_points: int = 100
+) -> tuple[np.ndarray, float, float]:
     """Return mean normalized beat template, shape stability and beat-shape dispersion."""
     x = np.asarray(signal, dtype=float).reshape(-1)
     peaks = np.asarray(peak_times_s, dtype=float)

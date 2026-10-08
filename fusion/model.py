@@ -15,6 +15,16 @@ class FeatureReference:
     weight: float = 1.0
     transform: str = "linear"
 
+    def __post_init__(self) -> None:
+        if (
+            not all(isfinite(v) for v in (self.fetal, self.adult, self.weight))
+            or self.weight < 0
+            or self.fetal == self.adult
+        ):
+            raise ValueError("Reference anchors must be distinct finite values and weight nonnegative finite")
+        if self.transform not in {"linear", "log"} or (self.transform == "log" and min(self.fetal, self.adult) <= 0):
+            raise ValueError("Reference transform must be linear or log with positive anchors")
+
     def _transform(self, value: float) -> tuple[float, float, float]:
         f, a, v = float(self.fetal), float(self.adult), float(value)
         if self.transform == "log":
@@ -40,9 +50,22 @@ class FeatureReference:
 @dataclass(frozen=True)
 class FusionConfig:
     references: Mapping[str, FeatureReference] = field(default_factory=dict)
-    modality_weights: Mapping[str, float] = field(default_factory=lambda: {"mechanical": 1 / 3, "electrical": 1 / 3, "molecular": 1 / 3})
+    modality_weights: Mapping[str, float] = field(
+        default_factory=lambda: {"mechanical": 1 / 3, "electrical": 1 / 3, "molecular": 1 / 3}
+    )
     minimum_modality_coverage: float = 0.50
     contradiction_threshold: float = 0.45
+
+    def __post_init__(self) -> None:
+        if not 0 <= self.minimum_modality_coverage <= 1 or not 0 <= self.contradiction_threshold <= 1:
+            raise ValueError("Coverage and contradiction thresholds must lie in [0, 1]")
+        if any(
+            k not in {"mechanical", "electrical", "molecular"} or not isfinite(v) or v < 0
+            for k, v in self.modality_weights.items()
+        ):
+            raise ValueError("Modality weights must be nonnegative finite and use known modalities")
+        if sum(self.modality_weights.values()) <= 0:
+            raise ValueError("At least one modality weight must be positive")
 
     def normalized_modality_weights(self) -> dict[str, float]:
         clean = {k: max(0.0, float(v)) for k, v in self.modality_weights.items()}
@@ -73,6 +96,8 @@ class FusionResult:
             "coherence_score": self.coherence_score,
             "confidence": self.confidence,
             "uncertainty_width": self.uncertainty_width,
+            "uncertainty_kind": "heuristic_not_confidence_interval",
+            "validation_status": "not_biologically_validated",
             "modality_scores": self.modality_scores,
             "feature_scores": self.feature_scores,
         }
@@ -113,7 +138,19 @@ def calculate_index(sample_id: str, values: Mapping[str, float], config: FusionC
     numerator = sum(score * weight for score, weight in contributing)
     denominator = sum(weight for _, weight in contributing)
     composite = 100.0 * numerator / denominator
-    coverage = float(denominator)
+    # Account for missing locked features inside each modality, as well as missing modalities.
+    expected = {}
+    for name, ref in config.references.items():
+        modality = _feature_modality(name)
+        expected[modality] = expected.get(modality, 0.0) + ref.weight
+    coverage = float(
+        sum(
+            weights.get(m, 0.0) * sum(w for _, w in rows) / expected[m]
+            for m, rows in by_modality.items()
+            if expected.get(m, 0) > 0
+        )
+    )
+    modality_scores = {m: s for m, s in modality_scores.items() if weights.get(m, 0) > 0}
 
     # Agreement is high when modalities are pointing to a similar maturity state.
     if len(modality_scores) == 1:
@@ -129,4 +166,14 @@ def calculate_index(sample_id: str, values: Mapping[str, float], config: FusionC
         status = "low_coverage"
     if len(modality_scores) >= 2 and coherence < (1.0 - config.contradiction_threshold):
         status = "discordant_modalities"
-    return FusionResult(sample_id, float(np.clip(composite, 0.0, 100.0)), modality_scores, feature_scores, coverage, status, coherence, confidence, uncertainty_width)
+    return FusionResult(
+        sample_id,
+        float(np.clip(composite, 0.0, 100.0)),
+        modality_scores,
+        feature_scores,
+        coverage,
+        status,
+        coherence,
+        confidence,
+        uncertainty_width,
+    )

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 import pandas as pd
+import numpy as np
 
 
 REQUIRED_TRACE_COLUMNS = ("sample_id", "timestamp_s", "motion_index", "modality")
@@ -15,8 +16,14 @@ def validate_trace_table(table: pd.DataFrame) -> None:
         raise ValueError(f"Trace table missing columns: {missing}")
     if table.empty:
         raise ValueError("Trace table is empty")
-    if (table["timestamp_s"].diff().dropna() < 0).any():
-        raise ValueError("timestamp_s must be non-decreasing")
+    if (
+        table["sample_id"].isna().any()
+        or not np.isfinite(table[["timestamp_s", "motion_index"]].to_numpy(dtype=float)).all()
+    ):
+        raise ValueError("Trace identifiers and measurements must be present and finite")
+    for _, group in table.groupby("sample_id", sort=False):
+        if (group["timestamp_s"].diff().dropna() <= 0).any():
+            raise ValueError("timestamp_s must be strictly increasing within each sample")
 
 
 def merge_modalities(
@@ -41,4 +48,4 @@ class SampleRecord:
     values: Mapping[str, Any]
 
     def to_frame(self) -> pd.DataFrame:
-        return pd.DataFrame([{"sample_id": self.sample_id, **dict(self.values)}])
+        return pd.DataFrame([{**dict(self.values), "sample_id": self.sample_id}])

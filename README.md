@@ -17,6 +17,8 @@ MyoTrace is a Python toolkit for extracting quantitative motion and beat-level m
 
 Motion magnitude is a motion index. It is not force or stress unless calibrated against an appropriate mechanical measurement.
 
+CPU execution is sufficient for every implemented method. No neural-network training, CUDA, or GPU is required. See [the CPU audit](docs/CPU_AUDIT.md) for tested behavior and retained failures.
+
 ## Installation
 
 ```bash
@@ -30,6 +32,7 @@ CLI:
 ```bash
 myotrace recording.mp4 --sample-id EHT_001 --out results/
 myotrace recording.mp4 --method ensemble --correct-motion --out results/
+myotrace recording.tif --fps 100 --roi 0 0 128 128 --out results/
 ```
 
 Python:
@@ -47,19 +50,39 @@ Force calibration requires paired instrument measurements:
 cal = fit_force_calibration(motion_values, force_values, units="uN")
 ```
 
+TIFF frame rates come from ImageJ `finterval`/`fps` or OME `TimeIncrement` metadata. Supply `--fps` when unavailable; MyoTrace never assumes 30 fps. TIFF input must be a single grayscale time sequence. Ambiguous Z/channel stacks must be selected upstream. ImageJ Z-labeled stacks with explicit time metadata are accepted.
+
+`--allow-qc-fail` retains flagged recordings for investigation. Static recordings export zero events and JSON `null` for undefined rates.
+
 ## Inputs and outputs
 
 **Inputs:** cardiac-cell/tissue video or TIFF data, sample identifiers, ROI/mask information, frame-rate metadata, preprocessing parameters, and optional paired force/electrical/molecular features.
 
 **Outputs:** motion traces, beat metrics, contraction/relaxation measurements, spectral/QC features, calibration results, multimodal feature tables, summaries, and provenance records. Typical files include `motion_trace.csv`, `beat_metrics.csv`, `summary.json`, `provenance.json`, and `qc.txt`.
 
+Raw Farneback and Lucas–Kanade traces are pixel displacement magnitudes per frame interval; timestamps are interval midpoints. Ensemble traces are standardized consensus values, and robust preprocessing normalizes amplitudes. These amplitudes are not directly comparable across preprocessing modes or recording frame rates.
+
+The legacy `beat_metrics.csv`, `n_beats`, and `mean_bpm` fields describe **detected motion events**. Unsigned optical flow can have separate contraction and relaxation peaks: a 60-cycle/min generated recording gives approximately 120 motion events/min. Outputs explicitly mark `measurement_status=motion_events_not_verified_cardiac_beats`. Do not interpret these as verified cardiac rate or physiological contraction/relaxation kinetics without a reference for your acquisition.
+
 ## Validation
 
 The repository includes synthetic timing benchmarks and utilities for group comparison, reference correlation, leave-one-modality-out analysis, Bland–Altman summaries, and repeatability. Biological validation requires independent recordings, external comparison, test/retest data, appropriate mechanical ground truth, locked reference panels, and independent batches or laboratories.
 
+Reproduce the CPU analytical checks:
+
+```bash
+pip install -e '.[all,dev]'
+pytest -q
+python scripts/validate_cpu.py
+# Downloads three checksum-pinned external hiPSC-CM movies (~307 MB):
+python scripts/validate_public_videos.py
+```
+
+Full reports, failed cases, source hashes, and public input identifiers are in `validation/cpu/`. Public data are fetched from their source and retain the original dataset terms. CI checks six Python/NumPy combinations, the analytical grid, public-video execution, and an installed wheel outside the checkout.
+
 ## Limitations
 
-Optical-flow outputs depend on image quality, frame rate, motion, preprocessing, segmentation/ROI choices, and camera stability. Synthetic benchmarks do not establish biological validity. Force claims require instrument-specific calibration. The multimodal maturity index is a computational framework, not a clinically validated maturity scale.
+Optical-flow outputs depend on image quality, frame rate, motion, preprocessing, segmentation/ROI choices, and camera stability. Synthetic benchmarks do not establish biological validity. Force claims require instrument-specific calibration. The multimodal maturity index is a computational framework, not a clinically validated maturity scale. Coverage accounts for missing locked features as well as missing modalities. `confidence` and `uncertainty_width` are heuristic descriptors, not validated probabilities or confidence intervals. The smoothing-residual `signal_snr_db` is also a descriptive proxy, not a calibrated physical SNR. Global translation correction can remove rigid biological motion as well as camera drift; confirm its appropriateness on your recordings. Full frame stacks are held in memory, so large acquisitions may require preprocessing or a future streaming implementation.
 
 ## License
 

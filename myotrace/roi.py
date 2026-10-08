@@ -13,6 +13,8 @@ class ROI:
     height: int
 
     def validate(self, frame_shape: tuple[int, int]) -> None:
+        if any(isinstance(v, bool) or not isinstance(v, int) for v in (self.x, self.y, self.width, self.height)):
+            raise ValueError("ROI coordinates and dimensions must be integers")
         h, w = frame_shape
         if self.x < 0 or self.y < 0 or self.width <= 0 or self.height <= 0:
             raise ValueError("ROI coordinates and dimensions must be positive")
@@ -27,7 +29,7 @@ def crop_frames(frames: np.ndarray, roi: ROI | None = None, mask: np.ndarray | N
         raise ValueError("frames must have shape (n_frames, height, width)")
     if roi is not None:
         roi.validate((x.shape[1], x.shape[2]))
-        x = x[:, roi.y:roi.y + roi.height, roi.x:roi.x + roi.width]
+        x = x[:, roi.y : roi.y + roi.height, roi.x : roi.x + roi.width]
     if mask is not None:
         m = np.asarray(mask, dtype=bool)
         if m.shape != x.shape[1:]:

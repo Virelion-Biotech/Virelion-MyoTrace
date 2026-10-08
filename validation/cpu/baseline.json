@@ -1,0 +1,51 @@
+{
+  "source_commit": "857130b",
+  "one_pixel_translation": {
+    "farneback": [
+      0.00015357087249867618,
+      0.00015356855874415487,
+      0.0001531243760837242,
+      0.00015240251377690583,
+      0.00015231536235660315
+    ],
+    "lk": [
+      0.5464553833007812,
+      0.5352630615234375,
+      0.5431203842163086,
+      0.5361871719360352,
+      0.5351543426513672
+    ],
+    "ensemble": [
+      1.2994755412714287,
+      0.09850153055006239,
+      0.5333289613597308,
+      -0.8704291738787826,
+      -1.0608768593023898
+    ]
+  },
+  "empty_summary": {
+    "n_beats": null,
+    "mean_bpm": null,
+    "sd_bpm": null,
+    "cv_bpm": null,
+    "mean_amplitude": null,
+    "mean_rise_time_s": null,
+    "mean_relaxation_time_s": null,
+    "mean_width_50_s": null,
+    "mean_area_abs": null,
+    "mean_beat_quality": null,
+    "regularity_index": null
+  },
+  "clean_sine_quality": {
+    "snr_db": -3.4204799117160034,
+    "periodicity": 0.9955619646030802,
+    "dominant_frequency_hz": 1.5,
+    "drift_fraction": 0.14994173475317932,
+    "clipping_fraction": 0.01,
+    "missing_fraction": 0.0,
+    "quality_score": 0.0,
+    "flags": [
+      "low_snr"
+    ]
+  }
+}

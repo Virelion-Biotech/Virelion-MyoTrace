@@ -23,4 +23,6 @@ def benchmark_synthetic(*, seed: int = 7, bpm: float = 90.0, fps: float = 100.0)
     estimate = float(np.nanmean([b.beat_rate_bpm for b in beats])) if beats else np.nan
     expected_count = max(0, len(truth.beat_times_s) - 1)
     error = abs(estimate - bpm) if np.isfinite(estimate) else np.inf
-    return DetectionBenchmark(bpm, estimate, error, len(beats) - expected_count, bool(error <= 3.0 and abs(len(beats) - expected_count) <= 1))
+    return DetectionBenchmark(
+        bpm, estimate, error, len(beats) - expected_count, bool(error <= 3.0 and abs(len(beats) - expected_count) <= 1)
+    )

@@ -1,0 +1,30 @@
+{
+  "dataset": "SarcAsM public test movies, Haertter et al.",
+  "record": "https://doi.org/10.5281/zenodo.8232838",
+  "license": "CC-BY-NC-4.0 (Zenodo dataset); source images not redistributed here",
+  "repository": "https://github.com/danihae/SarcAsM",
+  "commit": "49c8d5bfc25eb029274bab35305efaec2d3c2eda",
+  "movies": [
+    {
+      "name": "10kPa.tif",
+      "path": "test_data/high_speed_single_ACTN2-citrine_CM/10kPa.tif",
+      "url": "https://media.githubusercontent.com/media/danihae/SarcAsM/49c8d5bfc25eb029274bab35305efaec2d3c2eda/test_data/high_speed_single_ACTN2-citrine_CM/10kPa.tif",
+      "sha256": "f966b384cd00a8729f23ed155b7cc7cdd8b8e535909d9d3d39b56bc503ac7eeb",
+      "size": 102497939
+    },
+    {
+      "name": "20kPa.tif",
+      "path": "test_data/high_speed_single_ACTN2-citrine_CM/20kPa.tif",
+      "url": "https://media.githubusercontent.com/media/danihae/SarcAsM/49c8d5bfc25eb029274bab35305efaec2d3c2eda/test_data/high_speed_single_ACTN2-citrine_CM/20kPa.tif",
+      "sha256": "91583db78d27188a86393ec4e2908e4dd23d946a2e02a99fd2af7835c7d0c739",
+      "size": 102497938
+    },
+    {
+      "name": "30kPa.tif",
+      "path": "test_data/high_speed_single_ACTN2-citrine_CM/30kPa.tif",
+      "url": "https://media.githubusercontent.com/media/danihae/SarcAsM/49c8d5bfc25eb029274bab35305efaec2d3c2eda/test_data/high_speed_single_ACTN2-citrine_CM/30kPa.tif",
+      "sha256": "09639c6f0d05155e5c42be8dcf4c7e351227afd60106172a8f6c8cfaab189b09",
+      "size": 102497939
+    }
+  ]
+}

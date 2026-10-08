@@ -21,12 +21,13 @@ def assess_frames(frames: np.ndarray, fps: float) -> QCReport:
     x = np.asarray(frames, dtype=np.float32)
     if x.ndim != 3 or x.shape[0] < 3:
         raise ValueError("frames must have shape (n_frames, height, width) with n_frames >= 3")
+    if not np.isfinite(fps) or fps <= 0 or not np.all(np.isfinite(x)):
+        raise ValueError("fps must be positive finite and frames must be finite")
     frame_std = x.reshape(x.shape[0], -1).std(axis=1)
     frame_means = x.reshape(x.shape[0], -1).mean(axis=1)
     intensity_std = float(np.std(frame_means))
     diff = np.mean(np.abs(np.diff(x, axis=0)), axis=(1, 2))
-    q = float(np.percentile(diff, 25))
-    motion_fraction = float(np.mean(diff > max(q * 1.5, np.finfo(float).eps)))
+    motion_fraction = float(np.mean(diff > np.finfo(float).eps))
     flat = float(np.mean(frame_std < np.finfo(float).eps))
     reasons: list[str] = []
     if fps < 10:

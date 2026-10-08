@@ -26,6 +26,7 @@ def test_partial_modality_is_explicit() -> None:
 
 def test_lower_adult_reference_preserves_fetal_and_adult_endpoints():
     from fusion.model import FeatureReference
+
     for transform in ("linear", "log"):
         reference = FeatureReference(fetal=150, adult=100, higher_is_mature=False, transform=transform)
         assert reference.score(150) == 0.0

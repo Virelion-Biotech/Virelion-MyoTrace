@@ -16,7 +16,12 @@ class ReferenceSet:
 
 
 def build_config(reference_set: ReferenceSet, modality_weights: Mapping[str, float] | None = None) -> FusionConfig:
-    return FusionConfig(references=reference_set.references, modality_weights=modality_weights or {"mechanical": 1 / 3, "electrical": 1 / 3, "molecular": 1 / 3})
+    return FusionConfig(
+        references=reference_set.references,
+        modality_weights=modality_weights
+        if modality_weights is not None
+        else {"mechanical": 1 / 3, "electrical": 1 / 3, "molecular": 1 / 3},
+    )
 
 
 def score_samples(samples: Mapping[str, Mapping[str, float]], config: FusionConfig) -> list[FusionResult]:

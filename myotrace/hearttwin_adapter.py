@@ -4,10 +4,10 @@ Reads a HeartTwin payload from HEARTTWIN_PAYLOAD, locates a mechanical
 observation's input_path, runs MyoTrace analysis, and writes a compact,
 JSON-serializable result to stdout.
 """
+
 from __future__ import annotations
 
 import json
-import math
 import os
 import sys
 
@@ -15,20 +15,7 @@ from .flow import FlowConfig
 from .pipeline import analyze_video
 
 
-def _json_safe(value):
-    """Normalize command output to strict RFC-compliant JSON values."""
-    if isinstance(value, dict):
-        return {str(key): _json_safe(item) for key, item in value.items()}
-    if isinstance(value, (list, tuple)):
-        return [_json_safe(item) for item in value]
-    if isinstance(value, float):
-        return value if math.isfinite(value) else None
-    if hasattr(value, "item"):
-        try:
-            return _json_safe(value.item())
-        except (TypeError, ValueError):
-            pass
-    return value
+from .serialization import json_safe as _json_safe
 
 
 def _find_input_path(payload: dict) -> tuple[str, dict]:

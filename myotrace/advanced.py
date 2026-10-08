@@ -4,6 +4,7 @@ from dataclasses import dataclass, asdict
 
 import numpy as np
 from scipy.signal import correlate, welch
+from .robust import beat_periodicity
 
 
 @dataclass(frozen=True)
@@ -28,7 +29,7 @@ class TraceQC:
 def trace_qc(signal: np.ndarray, fps: float, *, min_duration_s: float = 5.0) -> TraceQC:
     """Quantify signal integrity without changing the underlying measurement."""
     x = np.asarray(signal, dtype=float).reshape(-1)
-    if fps <= 0:
+    if not np.isfinite(fps) or fps <= 0:
         raise ValueError("fps must be positive")
     finite = np.isfinite(x)
     y = x[finite]
@@ -46,9 +47,7 @@ def trace_qc(signal: np.ndarray, fps: float, *, min_duration_s: float = 5.0) -> 
         f, p = welch(filled - np.mean(filled), fs=fps, nperseg=min(len(filled), max(8, int(fps * 10))))
         mask = f > 0
         dom = float(f[mask][np.argmax(p[mask])]) if np.any(mask) else np.nan
-        ac = correlate(filled - np.mean(filled), filled - np.mean(filled), mode="full")
-        ac = ac[len(ac) // 2:]
-        periodicity = float(ac[min(len(ac) - 1, max(1, int(fps * 1.0)))] / max(ac[0], np.finfo(float).eps))
+        periodicity = beat_periodicity(filled, fps)
     else:
         dom, periodicity = np.nan, 0.0
     sat = float(np.mean((filled <= np.min(filled)) | (filled >= np.max(filled)))) if len(filled) else 0.0
@@ -61,13 +60,28 @@ def trace_qc(signal: np.ndarray, fps: float, *, min_duration_s: float = 5.0) -> 
     if np.isfinite(periodicity) and periodicity < 0.05:
         flags.append("weak_periodicity")
     usable = not any(f in flags for f in ("no_finite_samples", "short_recording", "flat_signal"))
-    return TraceQC(len(x), len(x) / fps, fps, float(np.mean(finite)), dynamic, rms, dom, periodicity, slope, sat, usable, tuple(flags))
+    return TraceQC(
+        len(x),
+        len(x) / fps,
+        fps,
+        float(np.mean(finite)),
+        dynamic,
+        rms,
+        dom,
+        periodicity,
+        slope,
+        sat,
+        usable,
+        tuple(flags),
+    )
 
 
 def cross_correlation_lag(reference: np.ndarray, candidate: np.ndarray) -> tuple[int, float]:
     """Return integer-sample lag and normalized correlation for modality alignment."""
     a = np.asarray(reference, dtype=float).reshape(-1)
     b = np.asarray(candidate, dtype=float).reshape(-1)
+    if not np.all(np.isfinite(a)) or not np.all(np.isfinite(b)):
+        raise ValueError("Signals must be finite")
     n = min(len(a), len(b))
     if n < 3:
         raise ValueError("Signals must contain at least 3 samples")
@@ -87,6 +101,8 @@ def cycle_average(signal: np.ndarray, peaks: np.ndarray, *, n_points: int = 200)
     p = np.asarray(peaks, dtype=int)
     if len(p) < 2 or n_points < 10:
         raise ValueError("At least two peaks and >=10 phase points are required")
+    if not np.all(np.isfinite(x)) or np.any(p < 0) or np.any(p >= x.size) or np.any(np.diff(p) <= 0):
+        raise ValueError("Require finite signal and strictly increasing in-bounds peaks")
     cycles = []
     phase = np.linspace(0.0, 1.0, n_points)
     for a, b in zip(p[:-1], p[1:]):

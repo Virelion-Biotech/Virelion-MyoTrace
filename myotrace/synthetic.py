@@ -13,7 +13,17 @@ class SyntheticTrace:
     fps: float
 
 
-def cardiac_motion(*, duration_s: float = 20.0, fps: float = 100.0, bpm: float = 90.0, amplitude: float = 1.0, rise_fraction: float = 0.30, noise_sd: float = 0.03, drift: float = 0.0, seed: int = 7) -> SyntheticTrace:
+def cardiac_motion(
+    *,
+    duration_s: float = 20.0,
+    fps: float = 100.0,
+    bpm: float = 90.0,
+    amplitude: float = 1.0,
+    rise_fraction: float = 0.30,
+    noise_sd: float = 0.03,
+    drift: float = 0.0,
+    seed: int = 7,
+) -> SyntheticTrace:
     """Generate a deterministic asymmetric cardiac-like contraction waveform for unit tests."""
     if duration_s <= 1 or fps <= 0 or bpm <= 0:
         raise ValueError("duration_s, fps and bpm must be positive; duration_s must exceed 1 s")

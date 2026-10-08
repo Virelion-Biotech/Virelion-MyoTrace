@@ -14,7 +14,9 @@ class MotionCorrectionReport:
     failed_fraction: float
 
 
-def correct_global_translation(frames: np.ndarray, *, max_corners: int = 200) -> tuple[np.ndarray, MotionCorrectionReport]:
+def correct_global_translation(
+    frames: np.ndarray, *, max_corners: int = 200
+) -> tuple[np.ndarray, MotionCorrectionReport]:
     """Compensate rigid camera/sample translation using phase-independent feature tracking.
 
     The transform is intentionally limited to translation. This prevents the correction model
@@ -27,6 +29,11 @@ def correct_global_translation(frames: np.ndarray, *, max_corners: int = 200) ->
     x = np.asarray(frames)
     if x.ndim != 3 or x.shape[0] < 3:
         raise ValueError("frames must have shape (n_frames, y, x)")
+    from .io import validate_frame_stack
+
+    validate_frame_stack(x)
+    if not isinstance(max_corners, int) or max_corners < 4:
+        raise ValueError("max_corners must be an integer >= 4")
     ref = x[0].astype(np.float32)
     out = np.empty_like(x)
     out[0] = x[0]
@@ -50,7 +57,15 @@ def correct_global_translation(frames: np.ndarray, *, max_corners: int = 200) ->
         mag = float(np.hypot(dx, dy))
         shifts.append(mag)
         matrix = np.float32([[1, 0, -dx], [0, 1, -dy]])
-        out[i] = cv2.warpAffine(x[i], matrix, (x.shape[2], x.shape[1]), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+        out[i] = cv2.warpAffine(
+            x[i], matrix, (x.shape[2], x.shape[1]), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT
+        )
     shifts_array = np.asarray(shifts, dtype=float)
-    report = MotionCorrectionReport(True, int(x.shape[0] - 1 - failed), float(np.median(shifts_array)) if shifts_array.size else 0.0, float(np.max(shifts_array)) if shifts_array.size else 0.0, float(failed / max(1, x.shape[0] - 1)))
+    report = MotionCorrectionReport(
+        True,
+        int(x.shape[0] - 1 - failed),
+        float(np.median(shifts_array)) if shifts_array.size else 0.0,
+        float(np.max(shifts_array)) if shifts_array.size else 0.0,
+        float(failed / max(1, x.shape[0] - 1)),
+    )
     return out, report

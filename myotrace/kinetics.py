@@ -28,7 +28,7 @@ class BeatMetrics:
 
 def prepare_signal(signal: np.ndarray, fps: float, *, low_hz: float = 0.25, high_hz: float = 8.0) -> np.ndarray:
     x = np.asarray(signal, dtype=np.float64).reshape(-1)
-    if fps <= 0:
+    if not np.isfinite(fps) or fps <= 0:
         raise ValueError("fps must be positive")
     if x.size < max(20, int(fps * 1.5)):
         raise ValueError("Signal is too short for reliable beat kinetics")
@@ -37,12 +37,15 @@ def prepare_signal(signal: np.ndarray, fps: float, *, low_hz: float = 0.25, high
         if finite.size == 0:
             raise ValueError("Signal contains no finite values")
         x = np.nan_to_num(x, nan=float(np.median(finite)), posinf=float(np.max(finite)), neginf=float(np.min(finite)))
+    x = x - np.median(x)
     nyq = 0.5 * fps
     low = max(low_hz / nyq, 1e-4)
     high = min(high_hz / nyq, 0.98)
     if low >= high:
         return x - np.median(x)
     b, a = butter(3, [low, high], btype="band")
+    if x.size <= 3 * max(len(a), len(b)):
+        raise ValueError("Signal is too short for the beat filter")
     return filtfilt(b, a, x)
 
 
@@ -61,8 +64,16 @@ def _first_crossing_down(x: np.ndarray, start: int, stop: int, level: float, fps
     return float(idx[0] / fps) if idx.size else np.nan
 
 
-def analyze_trace(signal: np.ndarray, fps: float, *, prominence_fraction: float = 0.12, min_bpm: float = 30.0, max_bpm: float = 240.0) -> list[BeatMetrics]:
+def analyze_trace(
+    signal: np.ndarray, fps: float, *, prominence_fraction: float = 0.12, min_bpm: float = 30.0, max_bpm: float = 240.0
+) -> list[BeatMetrics]:
     """Extract beat-level mechanical kinetics with conservative quality scoring."""
+    if (
+        not all(np.isfinite(v) for v in (prominence_fraction, min_bpm, max_bpm))
+        or not 0 < prominence_fraction <= 1
+        or not 0 < min_bpm < max_bpm
+    ):
+        raise ValueError("Require 0 < prominence_fraction <= 1 and 0 < min_bpm < max_bpm")
     x = prepare_signal(signal, fps)
     span = float(np.percentile(x, 95) - np.percentile(x, 5))
     prominence = max(span * prominence_fraction, np.finfo(float).eps)
@@ -85,7 +96,7 @@ def analyze_trace(signal: np.ndarray, fps: float, *, prominence_fraction: float 
         if amplitude <= 0:
             continue
         onset_level = baseline + 0.20 * amplitude
-        onset_candidates = np.flatnonzero(x[left:peak + 1] <= onset_level)
+        onset_candidates = np.flatnonzero(x[left : peak + 1] <= onset_level)
         onset = left + int(onset_candidates[-1]) if onset_candidates.size else left
         rise = float((peak - onset) / fps)
         relaxation = _first_crossing_down(x, peak, right, onset_level, fps)
@@ -97,12 +108,32 @@ def analyze_trace(signal: np.ndarray, fps: float, *, prominence_fraction: float 
                 width50 = np.nan
         end = min(right, peak + int(round(max(interval if np.isfinite(interval) else 1.0, 0.5) * fps)))
         area = _integrate_trapezoid(np.abs(x[onset:end] - baseline), dx=1.0 / fps) if end > onset else 0.0
-        regularity = float(np.exp(-abs(interval - expected_interval) / expected_interval)) if np.isfinite(expected_interval) and expected_interval > 0 and np.isfinite(interval) else 0.5
-        morphology = float(np.clip(1.0 - abs(rise - (relaxation if np.isfinite(relaxation) else rise)) / max(rise + (relaxation if np.isfinite(relaxation) else rise), 1e-6), 0, 1))
-        prominence_value = float(properties.get("prominences", np.array([0.0]))[list(peaks).index(peak)]) if len(properties.get("prominences", [])) == len(peaks) else span
+        regularity = (
+            float(np.exp(-abs(interval - expected_interval) / expected_interval))
+            if np.isfinite(expected_interval) and expected_interval > 0 and np.isfinite(interval)
+            else 0.5
+        )
+        morphology = float(
+            np.clip(
+                1.0
+                - abs(rise - (relaxation if np.isfinite(relaxation) else rise))
+                / max(rise + (relaxation if np.isfinite(relaxation) else rise), 1e-6),
+                0,
+                1,
+            )
+        )
+        prominence_value = (
+            float(properties.get("prominences", np.array([0.0]))[list(peaks).index(peak)])
+            if len(properties.get("prominences", [])) == len(peaks)
+            else span
+        )
         prominence_score = float(np.clip(prominence_value / max(span, np.finfo(float).eps), 0, 1))
         quality = float(np.clip(0.50 * regularity + 0.30 * morphology + 0.20 * prominence_score, 0, 1))
-        out.append(BeatMetrics(len(out), peak / fps, interval, bpm, amplitude, rise, relaxation, rise, baseline, width50, area, quality))
+        out.append(
+            BeatMetrics(
+                len(out), peak / fps, interval, bpm, amplitude, rise, relaxation, rise, baseline, width50, area, quality
+            )
+        )
     return out
 
 
@@ -117,23 +148,49 @@ def beats_to_frame_table(beats: list[BeatMetrics], sample_id: str) -> pd.DataFra
 
 
 def summarize_beats(beats: list[BeatMetrics]) -> dict[str, float]:
-    keys = ["n_beats", "mean_bpm", "sd_bpm", "cv_bpm", "mean_amplitude", "mean_rise_time_s", "mean_relaxation_time_s", "mean_width_50_s", "mean_area_abs", "mean_beat_quality", "regularity_index"]
+    keys = [
+        "n_beats",
+        "mean_bpm",
+        "sd_bpm",
+        "cv_bpm",
+        "mean_amplitude",
+        "mean_rise_time_s",
+        "mean_relaxation_time_s",
+        "mean_width_50_s",
+        "mean_area_abs",
+        "mean_beat_quality",
+        "regularity_index",
+    ]
     if not beats:
-        return {k: np.nan for k in keys}
+        return {k: (0.0 if k == "n_beats" else np.nan) for k in keys}
     bpm = np.asarray([b.beat_rate_bpm for b in beats], dtype=float)
     intervals = np.asarray([b.interval_s for b in beats], dtype=float)
-    mean_bpm = float(np.nanmean(bpm))
-    mean_interval = float(np.nanmean(intervals))
+    mean_bpm = _finite_mean(bpm)
+    mean_interval = _finite_mean(intervals)
     return {
         "n_beats": float(len(beats)),
         "mean_bpm": mean_bpm,
-        "sd_bpm": float(np.nanstd(bpm, ddof=1)) if len(bpm) > 1 else 0.0,
-        "cv_bpm": float(np.nanstd(bpm, ddof=1) / mean_bpm) if len(bpm) > 1 and mean_bpm > 0 else np.nan,
-        "mean_amplitude": float(np.nanmean([b.amplitude for b in beats])),
-        "mean_rise_time_s": float(np.nanmean([b.rise_time_s for b in beats])),
-        "mean_relaxation_time_s": float(np.nanmean([b.relaxation_time_s for b in beats])),
-        "mean_width_50_s": float(np.nanmean([b.width_50_s for b in beats])),
-        "mean_area_abs": float(np.nanmean([b.area_abs for b in beats])),
-        "mean_beat_quality": float(np.nanmean([b.beat_quality for b in beats])),
-        "regularity_index": float(np.clip(1.0 - np.nanstd(intervals, ddof=1) / mean_interval, 0, 1)) if len(intervals) > 1 and mean_interval > 0 else np.nan,
+        "sd_bpm": _finite_sd(bpm),
+        "cv_bpm": _finite_sd(bpm) / mean_bpm if mean_bpm > 0 else np.nan,
+        "mean_amplitude": _finite_mean([b.amplitude for b in beats]),
+        "mean_rise_time_s": _finite_mean([b.rise_time_s for b in beats]),
+        "mean_relaxation_time_s": _finite_mean([b.relaxation_time_s for b in beats]),
+        "mean_width_50_s": _finite_mean([b.width_50_s for b in beats]),
+        "mean_area_abs": _finite_mean([b.area_abs for b in beats]),
+        "mean_beat_quality": _finite_mean([b.beat_quality for b in beats]),
+        "regularity_index": float(np.clip(1.0 - _finite_sd(intervals) / mean_interval, 0, 1))
+        if len(intervals) > 1 and mean_interval > 0
+        else np.nan,
     }
+
+
+def _finite_mean(values) -> float:
+    x = np.asarray(values, dtype=float)
+    x = x[np.isfinite(x)]
+    return float(np.mean(x)) if x.size else np.nan
+
+
+def _finite_sd(values) -> float:
+    x = np.asarray(values, dtype=float)
+    x = x[np.isfinite(x)]
+    return float(np.std(x, ddof=1)) if x.size >= 2 else np.nan

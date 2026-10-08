@@ -19,13 +19,19 @@ def summarize_flow_field(flow: np.ndarray, *, threshold: float | None = None) ->
     f = np.asarray(flow, dtype=float)
     if f.ndim != 3 or f.shape[-1] != 2:
         raise ValueError("flow must have shape (height, width, 2)")
+    if (
+        not f.size
+        or not np.all(np.isfinite(f))
+        or (threshold is not None and (not np.isfinite(threshold) or threshold < 0))
+    ):
+        raise ValueError("flow must be finite and nonempty; threshold nonnegative finite")
     vx, vy = f[..., 0], f[..., 1]
     speed = np.hypot(vx, vy)
     mean_speed = float(np.mean(speed))
     median_speed = float(np.median(speed))
     p95 = float(np.percentile(speed, 95))
     cutoff = float(threshold) if threshold is not None else float(np.percentile(speed, 75))
-    motion_area = float(np.mean(speed >= cutoff))
+    motion_area = float(np.mean(speed > cutoff))
     resultant = np.hypot(np.mean(vx), np.mean(vy))
     mean_vector = float(np.mean(speed))
     coherence = float(np.clip(resultant / max(mean_vector, np.finfo(float).eps), 0.0, 1.0))

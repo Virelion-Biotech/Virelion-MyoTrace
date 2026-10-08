@@ -24,7 +24,9 @@ class ForceCalibration:
         return self.slope * np.asarray(motion) + self.intercept
 
 
-def fit_force_calibration(motion: np.ndarray, force: np.ndarray, *, units: str = "arbitrary_force_units") -> ForceCalibration:
+def fit_force_calibration(
+    motion: np.ndarray, force: np.ndarray, *, units: str = "arbitrary_force_units"
+) -> ForceCalibration:
     """Fit a simple auditable linear calibration from motion index to measured force."""
     x = np.asarray(motion, dtype=float).reshape(-1)
     y = np.asarray(force, dtype=float).reshape(-1)
@@ -40,7 +42,7 @@ def fit_force_calibration(motion: np.ndarray, force: np.ndarray, *, units: str =
     pred = slope * x + intercept
     residual = y - pred
     ss_res = float(np.sum(residual**2))
-    ss_tot = float(np.sum((y - np.mean(y))**2))
+    ss_tot = float(np.sum((y - np.mean(y)) ** 2))
     r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
     rmse = float(np.sqrt(np.mean(residual**2)))
     return ForceCalibration(float(slope), float(intercept), float(r2), rmse, int(x.size), units)

@@ -4,6 +4,7 @@ from dataclasses import dataclass, asdict
 from typing import Iterable
 
 import numpy as np
+from ._validation import bootstrap_parameters
 
 
 @dataclass(frozen=True)
@@ -33,8 +34,11 @@ class ReplicatePlan:
         return out
 
 
-def bootstrap_ci(values: Iterable[float], statistic=np.mean, *, n_boot: int = 5000, seed: int = 0, alpha: float = 0.05) -> tuple[float, float, float]:
+def bootstrap_ci(
+    values: Iterable[float], statistic=np.mean, *, n_boot: int = 5000, seed: int = 0, alpha: float = 0.05
+) -> tuple[float, float, float]:
     """Deterministic percentile bootstrap CI; resampling is at the supplied unit of replication."""
+    bootstrap_parameters(n_boot, alpha)
     x = np.asarray(list(values), dtype=float)
     x = x[np.isfinite(x)]
     if x.size < 2:
@@ -45,7 +49,9 @@ def bootstrap_ci(values: Iterable[float], statistic=np.mean, *, n_boot: int = 50
     return float(statistic(x)), float(np.quantile(estimates, alpha / 2)), float(np.quantile(estimates, 1 - alpha / 2))
 
 
-def sensitivity_to_weight(weights: dict[str, float], scores: dict[str, float], *, perturbation: float = 0.1) -> dict[str, float]:
+def sensitivity_to_weight(
+    weights: dict[str, float], scores: dict[str, float], *, perturbation: float = 0.1
+) -> dict[str, float]:
     """One-at-a-time normalized perturbation; useful for auditing a composite score."""
     if set(weights) != set(scores):
         raise ValueError("weights and scores must contain identical modalities")

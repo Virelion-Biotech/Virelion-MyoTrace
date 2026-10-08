@@ -9,9 +9,25 @@ from .uncertainty import BootstrapSummary, bootstrap_mean
 from .validation_protocol import ReplicatePlan, bootstrap_ci, sensitivity_to_weight
 
 __all__ = [
-    "BeatMetrics", "VideoAnalysis", "analyze_trace", "analyze_video", "summarize_beats",
-    "SignalQuality", "assess_signal_quality", "robust_preprocess", "BootstrapSummary", "bootstrap_mean",
-    "ForceCalibration", "fit_force_calibration", "TraceQC", "trace_qc", "cross_correlation_lag",
-    "cycle_average", "morphology_similarity", "ReplicatePlan", "bootstrap_ci", "sensitivity_to_weight",
+    "BeatMetrics",
+    "VideoAnalysis",
+    "analyze_trace",
+    "analyze_video",
+    "summarize_beats",
+    "SignalQuality",
+    "assess_signal_quality",
+    "robust_preprocess",
+    "BootstrapSummary",
+    "bootstrap_mean",
+    "ForceCalibration",
+    "fit_force_calibration",
+    "TraceQC",
+    "trace_qc",
+    "cross_correlation_lag",
+    "cycle_average",
+    "morphology_similarity",
+    "ReplicatePlan",
+    "bootstrap_ci",
+    "sensitivity_to_weight",
 ]
-__version__ = "0.3.0"
+from ._version import __version__  # noqa: F401

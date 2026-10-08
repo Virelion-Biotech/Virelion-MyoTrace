@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import json
-from dataclasses import asdict
 from pathlib import Path
 from typing import Iterable
 
 from .model import FusionResult
+from myotrace.serialization import json_safe
 
 
 def results_table(results: Iterable[FusionResult]):
@@ -29,5 +29,5 @@ def results_table(results: Iterable[FusionResult]):
 
 
 def write_json(results: Iterable[FusionResult], path: str | Path) -> None:
-    payload = [asdict(r) for r in results]
-    Path(path).write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+    payload = [r.to_dict() for r in results]
+    Path(path).write_text(json.dumps(json_safe(payload), indent=2, sort_keys=True, allow_nan=False), encoding="utf-8")

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+from importlib.metadata import version as distribution_version, PackageNotFoundError
 import json
 import platform
 import sys
@@ -18,6 +19,7 @@ class Provenance:
     source_file: str
     source_sha256: str
     parameters: dict[str, Any]
+    dependencies: dict[str, str | None]
 
 
 def sha256_file(path: str | Path, chunk_size: int = 1024 * 1024) -> str:
@@ -37,8 +39,19 @@ def build_provenance(source_file: str | Path, *, version: str, parameters: dict[
         source_file=str(source_file),
         source_sha256=sha256_file(source_file),
         parameters=parameters or {},
+        dependencies=_dependencies(),
     )
 
 
 def write_json(provenance: Provenance, path: str | Path) -> None:
     Path(path).write_text(json.dumps(asdict(provenance), indent=2, sort_keys=True), encoding="utf-8")
+
+
+def _dependencies() -> dict[str, str | None]:
+    out = {}
+    for name in ("numpy", "scipy", "pandas", "opencv-python-headless", "tifffile"):
+        try:
+            out[name] = distribution_version(name)
+        except PackageNotFoundError:
+            out[name] = None
+    return out

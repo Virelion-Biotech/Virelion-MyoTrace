@@ -84,3 +84,40 @@ jobs:
           assert r.confidence == 1.0
           assert r.coherence_score == 1.0
           PY
+
+      - run: python scripts/validate_cpu.py --out validation-ci/synthetic
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cpu-analytical-validation
+          path: validation-ci/synthetic
+
+  public-inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -e '.[video,tiff]'
+      - run: python scripts/validate_public_videos.py --out validation-ci/public
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-video-execution
+          path: validation-ci/public
+
+  wheel-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install build
+      - run: python -m build
+      - run: |
+          python -m venv /tmp/myotrace-installed
+          /tmp/myotrace-installed/bin/pip install ./dist/*.whl opencv-python-headless tifffile
+          cd /tmp
+          /tmp/myotrace-installed/bin/python "$GITHUB_WORKSPACE/scripts/smoke_wheel.py"
