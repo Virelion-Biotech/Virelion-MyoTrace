@@ -17,6 +17,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("video", type=Path, help="AVI/MP4/MOV video or TIFF stack")
     p.add_argument("--sample-id", default=None)
     p.add_argument("--fps", type=float, default=None, help="Override acquisition frame rate")
+    p.add_argument("--micrometers-per-pixel", type=float, default=None, help="Acquisition spatial scale")
     p.add_argument("--method", choices=["farneback", "lk", "ensemble"], default="farneback")
     p.add_argument("--signal-mode", choices=["motion", "signed_displacement"], default="motion")
     p.add_argument("--detector", choices=["noise_aware", "legacy"], default="noise_aware")
@@ -40,6 +41,7 @@ def main() -> int:
         detector=args.detector,
         reference_frame=args.reference_frame,
         fps_override=args.fps,
+        micrometers_per_pixel=args.micrometers_per_pixel,
         flow_config=cfg,
         reject_failed_qc=not args.allow_qc_fail,
         robust=not args.raw_signal,

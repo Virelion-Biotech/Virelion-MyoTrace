@@ -48,6 +48,7 @@ def main() -> int:
             detector=params.get("detector", "noise_aware"),
             reference_frame=params.get("reference_frame", 0),
             fps_override=params.get("fps"),
+            micrometers_per_pixel=params.get("micrometers_per_pixel"),
             flow_config=cfg,
             reject_failed_qc=not params.get("allow_qc_fail", False),
             robust=not params.get("raw_signal", False),

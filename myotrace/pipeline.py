@@ -36,6 +36,7 @@ def analyze_video(
     *,
     sample_id: str | None = None,
     fps_override: float | None = None,
+    micrometers_per_pixel: float | None = None,
     flow_config: FlowConfig | None = None,
     reject_failed_qc: bool = False,
     robust: bool = True,
@@ -91,7 +92,24 @@ def analyze_video(
             "modality": "mechanical",
         }
     )
+    physical = {}
+    if micrometers_per_pixel is not None:
+        from .physical_units import physical_motion
+
+        physical = physical_motion(
+            motion,
+            micrometers_per_pixel=micrometers_per_pixel,
+            fps=fps,
+            signal_mode=signal_mode,
+            method=cfg.method.lower(),
+        )
+        for name, values in physical.items():
+            trace[name] = values
     summary = summarize_beats(beats)
+    summary["micrometers_per_pixel"] = micrometers_per_pixel
+    summary["physical_outputs"] = list(physical)
+    summary["physical_interpretation"] = "scaled optical motion proxy; not tissue strain or force"
+
     summary["measurement_status"] = "motion_events_not_verified_cardiac_beats"
     summary["signal_mode"] = signal_mode
     summary["detector"] = detector
@@ -141,6 +159,8 @@ def analyze_video(
         version=__version__,
         parameters={
             "fps": fps,
+            "micrometers_per_pixel": micrometers_per_pixel,
+            "scale_source": "caller acquisition metadata" if micrometers_per_pixel is not None else "unknown",
             "fps_source": "override" if fps_override is not None else "acquisition_metadata",
             "flow": asdict(cfg),
             "robust": robust,
