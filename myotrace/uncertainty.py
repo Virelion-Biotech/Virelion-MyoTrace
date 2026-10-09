@@ -61,3 +61,29 @@ def bootstrap_statistic(
         n_boot,
         seed,
     )
+
+
+def independent_unit_mean(values, unit_ids, *, n_boot=2000, seed=42, alpha=0.05):
+    """Equal-weight biological-unit mean and CI; nested beats/frames do not increase n."""
+    bootstrap_parameters(n_boot, alpha)
+    x = np.asarray(values, dtype=float)
+    units = np.asarray(unit_ids, dtype=object)
+    if x.ndim != 1 or units.shape != x.shape or not x.size or not np.isfinite(x).all():
+        raise ValueError("Finite values and one biological unit ID per observation are required")
+    if any(not isinstance(u, str) or not u.strip() for u in units):
+        raise ValueError("Biological unit IDs must be explicit nonblank strings")
+    ids = sorted(set(units))
+    if len(ids) < 2:
+        raise ValueError("At least two independent biological units are required for a CI")
+    means = np.array([np.mean(x[units == u]) for u in ids])
+    ci = bootstrap_mean(means, n_boot=n_boot, seed=seed, alpha=alpha)
+    return {
+        "estimate": ci.estimate,
+        "lower": ci.lower,
+        "upper": ci.upper,
+        "n_independent": len(ids),
+        "n_observations": len(x),
+        "resampling_unit": "biological_unit",
+        "estimand": "equal-weight mean of biological-unit means",
+        "unit_means": dict(zip(ids, means.tolist())),
+    }
