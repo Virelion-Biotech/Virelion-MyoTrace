@@ -1,0 +1,20 @@
+{
+  "artifacts": {
+    "logs/movie-30kPa.txt": "9f2ceb93cb84f189fea2a4db108138add34b347aa2b1dcfe8a16c2ebaaf5b54e",
+    "results/30kPa/30kPa_ensemble_events.csv": "1932535ed13ba7bc58adc8b71c1e8047a765192393d42817454a0d51c34a7f88",
+    "results/30kPa/30kPa_ensemble_trace.csv": "4d1b82b41677c226866d8b0ce987f38b529d92e819817692be3aab44860c85b5",
+    "results/30kPa/30kPa_farneback_events.csv": "ac6a723440b32afe9744ea0ef0810d7f95071dbcc677599b09676fc2dccf1198",
+    "results/30kPa/30kPa_farneback_trace.csv": "e12b4a0f3a044246248fbb5834466bdbb34a6ed0fc7eb8610f88feca00d07bf0",
+    "results/30kPa/30kPa_lk_events.csv": "b8147bbd9390c9cc76d206e39784dae1de42409d940bc4d1fe52f3311b9b4834",
+    "results/30kPa/30kPa_lk_trace.csv": "2b5a71937eb6c1f35b5724a7e2f5a5c7c2bc27f3f86812a3f6360e3f626d3383",
+    "results/30kPa/30kPa_signed_displacement_events.csv": "2fbd09a76eaa20a8ed06c9462743082d77935038c655c8bcadc305b09581ae53",
+    "results/30kPa/30kPa_signed_displacement_trace.csv": "0a74b48ab393a0a02b43b1850c61c06b2d8f42c552be67fd715ae07c61158b10",
+    "results/30kPa/results.json": "30cd680c9986cab21b1e06320d642f6e2c268c672fb5076917b57772d0107cf8",
+    "results/movie-30kPa-execution.json": "6817036037f8ef29e23cb70fefd25f52b5bc6e5f7353e0e9e357b25cb1425861"
+  },
+  "identity": "646d6919ec9766e6fdf69cf84c7cbe118c31feb6f49b58236c308d07323ef5c7",
+  "result": {
+    "log": "logs/movie-30kPa.txt",
+    "returncode": 0
+  }
+}

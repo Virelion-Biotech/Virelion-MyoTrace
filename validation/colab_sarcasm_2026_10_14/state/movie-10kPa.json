@@ -1,0 +1,20 @@
+{
+  "artifacts": {
+    "logs/movie-10kPa.txt": "e7a2820e052afc12cd853a4d8725d276d17482cb43761dbdc8e6ccffd06a95dd",
+    "results/10kPa/10kPa_ensemble_events.csv": "6788143ba565ae02bfa670db5e9f1ceac6a3fc0dd9bf91053b061d5fe0ac4a9b",
+    "results/10kPa/10kPa_ensemble_trace.csv": "a10cb9e8164ee350f264778e285867b7fc1462d9f0f5c48e52d4ae6c7ba13860",
+    "results/10kPa/10kPa_farneback_events.csv": "24f49c95396e508118a20b2f5be37666b292ff3c541cb9b826b86a2ca62e8d60",
+    "results/10kPa/10kPa_farneback_trace.csv": "ec6afcff8b4031e9a1e4e1775a596bdeea0683744619cb361f0924d0ad010db9",
+    "results/10kPa/10kPa_lk_events.csv": "6f5d1517861b947ab1d696038dda4e9573de66a48cd5b287f64f529ad5dc90e1",
+    "results/10kPa/10kPa_lk_trace.csv": "3c70e12152ddb087d9e36e976a424efdeb4dafd0b7772aa98b85fdd58804be15",
+    "results/10kPa/10kPa_signed_displacement_events.csv": "085459b88e1f3666b5de0e746a62c9a45e1394b0954b4d382802369d432536c7",
+    "results/10kPa/10kPa_signed_displacement_trace.csv": "04a8da4e7f64a1e9ea8d6b52e601e8c1c61a00eb6eaa300e8b7fff8becf20d42",
+    "results/10kPa/results.json": "0f32e274ff439d7246e4bdc5d0811812212810704691df6c8fcab41dd3585a96",
+    "results/movie-10kPa-execution.json": "4f9d66300eccd08737727eb3c018c8a3a6c7d71069b238f208c4b2ecc302b716"
+  },
+  "identity": "646d6919ec9766e6fdf69cf84c7cbe118c31feb6f49b58236c308d07323ef5c7",
+  "result": {
+    "log": "logs/movie-10kPa.txt",
+    "returncode": 0
+  }
+}

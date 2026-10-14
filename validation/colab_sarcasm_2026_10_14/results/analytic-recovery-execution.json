@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/content/07_MyoTrace_SarcAsM_v1/venv/bin/python",
+    "/content/07_MyoTrace_SarcAsM_v1/Virelion-MyoTrace/scripts/validate_recovery_cpu.py",
+    "--out",
+    "/content/drive/MyDrive/HeartTwinValidation/07_MyoTrace_SarcAsM_v1/results/recovery"
+  ],
+  "returncode": 0,
+  "seconds": 105.25329983099982
+}

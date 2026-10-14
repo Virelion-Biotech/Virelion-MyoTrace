@@ -1,0 +1,41 @@
+{
+  "error": null,
+  "input_receipts": {
+    "data/10kPa.tif.receipt.json": {
+      "producer_algorithm": "sha256",
+      "producer_checksum": "f966b384cd00a8729f23ed155b7cc7cdd8b8e535909d9d3d39b56bc503ac7eeb",
+      "sha256": "f966b384cd00a8729f23ed155b7cc7cdd8b8e535909d9d3d39b56bc503ac7eeb",
+      "size": 102497939,
+      "url": "https://media.githubusercontent.com/media/danihae/SarcAsM/49c8d5bfc25eb029274bab35305efaec2d3c2eda/test_data/high_speed_single_ACTN2-citrine_CM/10kPa.tif"
+    },
+    "data/20kPa.tif.receipt.json": {
+      "producer_algorithm": "sha256",
+      "producer_checksum": "91583db78d27188a86393ec4e2908e4dd23d946a2e02a99fd2af7835c7d0c739",
+      "sha256": "91583db78d27188a86393ec4e2908e4dd23d946a2e02a99fd2af7835c7d0c739",
+      "size": 102497938,
+      "url": "https://media.githubusercontent.com/media/danihae/SarcAsM/49c8d5bfc25eb029274bab35305efaec2d3c2eda/test_data/high_speed_single_ACTN2-citrine_CM/20kPa.tif"
+    },
+    "data/30kPa.tif.receipt.json": {
+      "producer_algorithm": "sha256",
+      "producer_checksum": "09639c6f0d05155e5c42be8dcf4c7e351227afd60106172a8f6c8cfaab189b09",
+      "sha256": "09639c6f0d05155e5c42be8dcf4c7e351227afd60106172a8f6c8cfaab189b09",
+      "size": 102497939,
+      "url": "https://media.githubusercontent.com/media/danihae/SarcAsM/49c8d5bfc25eb029274bab35305efaec2d3c2eda/test_data/high_speed_single_ACTN2-citrine_CM/30kPa.tif"
+    },
+    "data/validation_data.zip.receipt.json": {
+      "producer_algorithm": "md5",
+      "producer_checksum": "4bd8a60bef3fc3816f62811daaafe0f6",
+      "sha256": "90f898241f71f805895f1ab1de37c45b232214f63e46956b3166007464e92bb5",
+      "size": 43969026,
+      "url": "https://zenodo.org/api/records/8232838/files/validation_data.zip/content"
+    }
+  },
+  "protocol_sha256": "646d6919ec9766e6fdf69cf84c7cbe118c31feb6f49b58236c308d07323ef5c7",
+  "scientific_validation": "NOT_ESTABLISHED_BY_EXECUTION",
+  "scope": "Download three immutable public cardiac movies; native repeatability/ingestion checks, analytical motion recovery and structural label inventory.",
+  "seconds_this_session": 1544.822548276,
+  "source_pins": {
+    "Virelion-MyoTrace": "6772d2e6db11a2ef46f2bef16a91e5c5e3d3d7a4"
+  },
+  "status": "COMPLETE_SCOPED"
+}

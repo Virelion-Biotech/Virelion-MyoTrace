@@ -1,0 +1,1525 @@
+{
+  "scope": "Export integrity, detector replay and exploratory prominence sensitivity only",
+  "payload_hashes_verified": 53,
+  "traces_replayed": 12,
+  "raw_movie_optical_flow_rerun": false,
+  "ground_truth_available": false,
+  "parameter_selection_performed": false,
+  "movies": [
+    {
+      "movie": "10kPa",
+      "methods": [
+        {
+          "method": "farneback",
+          "export_replayed": true,
+          "events": 11,
+          "mean_motion_event_rate_per_min": 86.85917035095855,
+          "event_times_s": [
+            0.8943563019856811,
+            1.5835850117728114,
+            2.2564035141840577,
+            2.91281180921942,
+            3.6676813485100865,
+            4.274859021417797,
+            4.947677523829043,
+            5.620496026240289,
+            6.408185980282724,
+            7.113824897445738,
+            7.835874021984637
+          ],
+          "default_prominence_threshold": 0.2219024161770898,
+          "span_floor": 0.16898160592680786,
+          "residual_noise_floor": 0.2219024161770898,
+          "candidate_peaks": [
+            {
+              "time_s": 0.057435725815594196,
+              "prominence": 0.20208735858359156,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 0.8943563019856811,
+              "prominence": 0.8546903058247808,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.5835850117728114,
+              "prominence": 1.7217765781818297,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 2.2564035141840577,
+              "prominence": 1.021143299291145,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 2.633838283829391,
+              "prominence": 0.005219812851862238,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 2.91281180921942,
+              "prominence": 1.8622300081627134,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.6676813485100865,
+              "prominence": 0.6444933645126919,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.274859021417797,
+              "prominence": 1.1318370049382735,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.947677523829043,
+              "prominence": 1.081489295689661,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.25947146397084,
+              "prominence": 0.013461084549136804,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 5.620496026240289,
+              "prominence": 1.3328915267433818,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 6.047161418013275,
+              "prominence": 0.029327467084000247,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 6.408185980282724,
+              "prominence": 0.9673683263840915,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.113824897445738,
+              "prominence": 1.14848746883828,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.835874021984637,
+              "prominence": 0.6225918456419061,
+              "passes_default_prominence": true
+            }
+          ],
+          "prominence_sensitivity": [
+            {
+              "prominence_fraction": 0.06,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.85917035095855
+            },
+            {
+              "prominence_fraction": 0.09,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.85917035095855
+            },
+            {
+              "prominence_fraction": 0.12,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.85917035095855
+            },
+            {
+              "prominence_fraction": 0.15,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.85917035095855
+            },
+            {
+              "prominence_fraction": 0.18,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.85917035095855
+            }
+          ]
+        },
+        {
+          "method": "lk",
+          "export_replayed": true,
+          "events": 11,
+          "mean_motion_event_rate_per_min": 86.86978667187907,
+          "event_times_s": [
+            0.9107665093615651,
+            1.5999952191486955,
+            2.2728137215599418,
+            2.929222016595304,
+            3.6840915558859706,
+            4.291269228793681,
+            4.947677523829043,
+            5.636906233616173,
+            6.424596187658608,
+            7.146645312197506,
+            7.852284229360521
+          ],
+          "default_prominence_threshold": 0.24149152144423752,
+          "span_floor": 0.1744887732690101,
+          "residual_noise_floor": 0.24149152144423752,
+          "candidate_peaks": [
+            {
+              "time_s": 0.057435725815594196,
+              "prominence": 0.11703016934637556,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 0.9107665093615651,
+              "prominence": 1.0386836390030791,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.5999952191486955,
+              "prominence": 1.5298616411951194,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.8625585371628404,
+              "prominence": 0.0002337853399529688,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 2.2728137215599418,
+              "prominence": 1.0778167893967856,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 2.929222016595304,
+              "prominence": 1.9707856756147635,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.6840915558859706,
+              "prominence": 0.8127357306747964,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.291269228793681,
+              "prominence": 1.1710893834439466,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.947677523829043,
+              "prominence": 1.1821816856805447,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.636906233616173,
+              "prominence": 1.4993337086545817,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 6.145622662268579,
+              "prominence": 0.000480854167311473,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 6.424596187658608,
+              "prominence": 1.2254413116901,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 6.785620749928057,
+              "prominence": 0.04009094354017739,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 7.146645312197506,
+              "prominence": 1.2252089639162311,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.852284229360521,
+              "prominence": 0.6062587856552741,
+              "passes_default_prominence": true
+            }
+          ],
+          "prominence_sensitivity": [
+            {
+              "prominence_fraction": 0.06,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.86978667187907
+            },
+            {
+              "prominence_fraction": 0.09,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.86978667187907
+            },
+            {
+              "prominence_fraction": 0.12,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.86978667187907
+            },
+            {
+              "prominence_fraction": 0.15,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.86978667187907
+            },
+            {
+              "prominence_fraction": 0.18,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.86978667187907
+            }
+          ]
+        },
+        {
+          "method": "ensemble",
+          "export_replayed": true,
+          "events": 11,
+          "mean_motion_event_rate_per_min": 86.73259684977006,
+          "event_times_s": [
+            0.8943563019856811,
+            1.5999952191486955,
+            2.2728137215599418,
+            2.91281180921942,
+            3.6840915558859706,
+            4.291269228793681,
+            4.947677523829043,
+            5.636906233616173,
+            6.424596187658608,
+            7.130235104821622,
+            7.852284229360521
+          ],
+          "default_prominence_threshold": 0.25540379961685655,
+          "span_floor": 0.17795608785291853,
+          "residual_noise_floor": 0.25540379961685655,
+          "candidate_peaks": [
+            {
+              "time_s": 0.057435725815594196,
+              "prominence": 0.1858090697720664,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 0.8943563019856811,
+              "prominence": 1.0659102625609684,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.5999952191486955,
+              "prominence": 1.8172604081841581,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 2.2728137215599418,
+              "prominence": 1.115459103850972,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 2.91281180921942,
+              "prominence": 2.0685667732734747,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.6840915558859706,
+              "prominence": 0.7511163441186617,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.291269228793681,
+              "prominence": 1.2238654781098615,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.947677523829043,
+              "prominence": 1.1845568423353234,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.636906233616173,
+              "prominence": 1.5022222220114922,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 6.096392040140927,
+              "prominence": 0.011916317568639812,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 6.424596187658608,
+              "prominence": 1.1480054986671338,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 6.752800335176289,
+              "prominence": 0.004611282946449302,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 7.130235104821622,
+              "prominence": 1.208083568892362,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.852284229360521,
+              "prominence": 0.6262036067153012,
+              "passes_default_prominence": true
+            }
+          ],
+          "prominence_sensitivity": [
+            {
+              "prominence_fraction": 0.06,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.73259684977006
+            },
+            {
+              "prominence_fraction": 0.09,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.73259684977006
+            },
+            {
+              "prominence_fraction": 0.12,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.73259684977006
+            },
+            {
+              "prominence_fraction": 0.15,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.73259684977006
+            },
+            {
+              "prominence_fraction": 0.18,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 86.73259684977006
+            }
+          ]
+        },
+        {
+          "method": "signed_displacement",
+          "export_replayed": true,
+          "events": 6,
+          "mean_motion_event_rate_per_min": 41.58881152696196,
+          "event_times_s": [
+            0.19692248851060867,
+            1.8051228113472462,
+            3.216400645673275,
+            4.479986613616347,
+            5.809213411062956,
+            7.499464770779014
+          ],
+          "default_prominence_threshold": 0.22344516979313786,
+          "span_floor": 0.22344516979313786,
+          "residual_noise_floor": 0.1115994959177031,
+          "candidate_peaks": [
+            {
+              "time_s": 0.19692248851060867,
+              "prominence": 0.9490005253410612,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.2471757605671883,
+              "prominence": 0.005199527680216587,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 1.8051228113472462,
+              "prominence": 1.617073023406673,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.216400645673275,
+              "prominence": 1.6302225895416953,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.9876803923398256,
+              "prominence": 0.003070628970175515,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 4.479986613616347,
+              "prominence": 1.8249258197165774,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.809213411062956,
+              "prominence": 1.6314189795475706,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.499464770779014,
+              "prominence": 1.2755270116441573,
+              "passes_default_prominence": true
+            }
+          ],
+          "prominence_sensitivity": [
+            {
+              "prominence_fraction": 0.06,
+              "events": 6,
+              "mean_motion_event_rate_per_min": 41.58881152696196
+            },
+            {
+              "prominence_fraction": 0.09,
+              "events": 6,
+              "mean_motion_event_rate_per_min": 41.58881152696196
+            },
+            {
+              "prominence_fraction": 0.12,
+              "events": 6,
+              "mean_motion_event_rate_per_min": 41.58881152696196
+            },
+            {
+              "prominence_fraction": 0.15,
+              "events": 6,
+              "mean_motion_event_rate_per_min": 41.58881152696196
+            },
+            {
+              "prominence_fraction": 0.18,
+              "events": 6,
+              "mean_motion_event_rate_per_min": 41.58881152696196
+            }
+          ]
+        }
+      ],
+      "event_matching": [
+        {
+          "methods": [
+            "farneback",
+            "lk"
+          ],
+          "tolerance_s": 0.06641020737588406,
+          "matched_events": 11,
+          "farneback_only_s": [],
+          "other_only_s": []
+        },
+        {
+          "methods": [
+            "farneback",
+            "ensemble"
+          ],
+          "tolerance_s": 0.06641020737588406,
+          "matched_events": 11,
+          "farneback_only_s": [],
+          "other_only_s": []
+        }
+      ],
+      "original_method_agreement": [
+        {
+          "movie": "10kPa.tif",
+          "motion_event_rates": {
+            "farneback": 86.85917035095855,
+            "lk": 86.86978667187907,
+            "ensemble": 86.73259684977006
+          },
+          "span_per_min": 0.13718982210900776,
+          "flagged": false,
+          "interpretation": "Descriptive method disagreement; no method is designated ground truth"
+        }
+      ]
+    },
+    {
+      "movie": "20kPa",
+      "methods": [
+        {
+          "method": "farneback",
+          "export_replayed": true,
+          "events": 7,
+          "mean_motion_event_rate_per_min": 68.52794861316141,
+          "event_times_s": [
+            0.6152263144031167,
+            2.534732415340841,
+            3.125349677167833,
+            4.569080761633813,
+            5.143291988410056,
+            6.701865318231285,
+            7.341700685210526
+          ],
+          "default_prominence_threshold": 0.1534922391105689,
+          "span_floor": 0.1534922391105689,
+          "residual_noise_floor": 0.12268417596820425,
+          "candidate_peaks": [
+            {
+              "time_s": 0.6152263144031167,
+              "prominence": 1.4018382801541045,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.0745952958241105,
+              "prominence": 0.1311239586120077,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 1.5995884174481034,
+              "prominence": 0.08895734088527793,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 2.009739293716848,
+              "prominence": 0.041940587117797024,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 2.534732415340841,
+              "prominence": 0.9832245767462392,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.125349677167833,
+              "prominence": 1.3748941541004807,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.5026884833350778,
+              "prominence": 0.005296708410637396,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 3.797997114248574,
+              "prominence": 0.0030255810823707208,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 4.569080761633813,
+              "prominence": 0.6294113396531171,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.143291988410056,
+              "prominence": 1.4889794028639516,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.53703682962805,
+              "prominence": 0.000549939683745726,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 5.947187705896795,
+              "prominence": 0.044697651409438266,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 6.701865318231285,
+              "prominence": 1.0180091365868613,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.341700685210526,
+              "prominence": 1.2854038086490938,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 8.014348122291267,
+              "prominence": 0.10359587584986299,
+              "passes_default_prominence": false
+            }
+          ],
+          "prominence_sensitivity": [
+            {
+              "prominence_fraction": 0.06,
+              "events": 8,
+              "mean_motion_event_rate_per_min": 78.80223402837588
+            },
+            {
+              "prominence_fraction": 0.09,
+              "events": 8,
+              "mean_motion_event_rate_per_min": 78.80223402837588
+            },
+            {
+              "prominence_fraction": 0.12,
+              "events": 7,
+              "mean_motion_event_rate_per_min": 68.52794861316141
+            },
+            {
+              "prominence_fraction": 0.15,
+              "events": 7,
+              "mean_motion_event_rate_per_min": 68.52794861316141
+            },
+            {
+              "prominence_fraction": 0.18,
+              "events": 7,
+              "mean_motion_event_rate_per_min": 68.52794861316141
+            }
+          ]
+        },
+        {
+          "method": "lk",
+          "export_replayed": true,
+          "events": 9,
+          "mean_motion_event_rate_per_min": 80.24858077132852,
+          "event_times_s": [
+            0.6316323494538665,
+            1.6652125576511025,
+            2.5511384503915906,
+            3.125349677167833,
+            4.569080761633813,
+            5.143291988410056,
+            5.668285110034049,
+            6.669053248129785,
+            7.325294650159776
+          ],
+          "default_prominence_threshold": 0.19033314214492225,
+          "span_floor": 0.1553247350817978,
+          "residual_noise_floor": 0.19033314214492225,
+          "candidate_peaks": [
+            {
+              "time_s": 0.6316323494538665,
+              "prominence": 1.327315132864479,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.1730315061286092,
+              "prominence": 0.1365492366175484,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 1.6652125576511025,
+              "prominence": 0.26064558782497516,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.9933332586660981,
+              "prominence": 0.05148425176714093,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 2.5511384503915906,
+              "prominence": 0.9301580904146618,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.125349677167833,
+              "prominence": 1.4278192886127328,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.568312623538077,
+              "prominence": 0.030670985675872203,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 4.027681604959071,
+              "prominence": 0.14449713682232362,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 4.569080761633813,
+              "prominence": 0.7121591393804567,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.143291988410056,
+              "prominence": 1.55257902833227,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.668285110034049,
+              "prominence": 0.29876687737081253,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.930781670846045,
+              "prominence": 0.03414625834956697,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 6.32452651206404,
+              "prominence": 0.08227575882350657,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 6.669053248129785,
+              "prominence": 0.8040727925083192,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.325294650159776,
+              "prominence": 1.3697581423745502,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.686227421276271,
+              "prominence": 0.0060174087929207865,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 7.997942087240517,
+              "prominence": 0.06826517683982591,
+              "passes_default_prominence": false
+            }
+          ],
+          "prominence_sensitivity": [
+            {
+              "prominence_fraction": 0.06,
+              "events": 9,
+              "mean_motion_event_rate_per_min": 80.24858077132852
+            },
+            {
+              "prominence_fraction": 0.09,
+              "events": 9,
+              "mean_motion_event_rate_per_min": 80.24858077132852
+            },
+            {
+              "prominence_fraction": 0.12,
+              "events": 9,
+              "mean_motion_event_rate_per_min": 80.24858077132852
+            },
+            {
+              "prominence_fraction": 0.15,
+              "events": 9,
+              "mean_motion_event_rate_per_min": 80.24858077132852
+            },
+            {
+              "prominence_fraction": 0.18,
+              "events": 9,
+              "mean_motion_event_rate_per_min": 80.24858077132852
+            }
+          ]
+        },
+        {
+          "method": "ensemble",
+          "export_replayed": true,
+          "events": 9,
+          "mean_motion_event_rate_per_min": 80.69575937236905,
+          "event_times_s": [
+            0.6152263144031167,
+            1.6488065226003528,
+            2.5511384503915906,
+            3.125349677167833,
+            4.569080761633813,
+            5.143291988410056,
+            5.635473039932549,
+            6.685459283180535,
+            7.341700685210526
+          ],
+          "default_prominence_threshold": 0.15358392157527231,
+          "span_floor": 0.15358392157527231,
+          "residual_noise_floor": 0.13314967275241296,
+          "candidate_peaks": [
+            {
+              "time_s": 0.6152263144031167,
+              "prominence": 1.3744325253817593,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.1238134009763598,
+              "prominence": 0.09797244455459814,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 1.6488065226003528,
+              "prominence": 0.15647133529949783,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.9933332586660981,
+              "prominence": 0.05589761320112391,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 2.5511384503915906,
+              "prominence": 0.9137901174094435,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.125349677167833,
+              "prominence": 1.396638783164527,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.568312623538077,
+              "prominence": 0.01792603590532804,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 4.569080761633813,
+              "prominence": 0.6636555404331124,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.143291988410056,
+              "prominence": 1.50032034758793,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.635473039932549,
+              "prominence": 0.17717138517972006,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.930781670846045,
+              "prominence": 0.04886476694236172,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 6.27530840691179,
+              "prominence": 9.451563933204898e-05,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 6.685459283180535,
+              "prominence": 0.9228958541015725,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.341700685210526,
+              "prominence": 1.2513290726771176,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.719039491377771,
+              "prominence": 0.04414457363277313,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 8.014348122291267,
+              "prominence": 0.058909335396987644,
+              "passes_default_prominence": false
+            }
+          ],
+          "prominence_sensitivity": [
+            {
+              "prominence_fraction": 0.06,
+              "events": 9,
+              "mean_motion_event_rate_per_min": 80.69575937236905
+            },
+            {
+              "prominence_fraction": 0.09,
+              "events": 9,
+              "mean_motion_event_rate_per_min": 80.69575937236905
+            },
+            {
+              "prominence_fraction": 0.12,
+              "events": 9,
+              "mean_motion_event_rate_per_min": 80.69575937236905
+            },
+            {
+              "prominence_fraction": 0.15,
+              "events": 7,
+              "mean_motion_event_rate_per_min": 68.64508536136128
+            },
+            {
+              "prominence_fraction": 0.18,
+              "events": 7,
+              "mean_motion_event_rate_per_min": 68.64508536136128
+            }
+          ]
+        },
+        {
+          "method": "signed_displacement",
+          "export_replayed": true,
+          "events": 7,
+          "mean_motion_event_rate_per_min": 71.83906105436823,
+          "event_times_s": [
+            0.295308630913496,
+            2.23122076690197,
+            2.7890259586274624,
+            4.183538937941194,
+            4.823374304920435,
+            6.4147597048431635,
+            6.923346791416407
+          ],
+          "default_prominence_threshold": 0.1654063355394271,
+          "span_floor": 0.1654063355394271,
+          "residual_noise_floor": 0.03406500259882751,
+          "candidate_peaks": [
+            {
+              "time_s": 0.295308630913496,
+              "prominence": 0.41226062505036054,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 0.9843621030449867,
+              "prominence": 0.038573516474639136,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 2.23122076690197,
+              "prominence": 1.2260792235672797,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 2.7890259586274624,
+              "prominence": 0.40849257333908306,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.937448412179947,
+              "prominence": 0.0004303372148286577,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 4.183538937941194,
+              "prominence": 1.4765360626155655,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.823374304920435,
+              "prominence": 0.47105305655254204,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 6.135857108980417,
+              "prominence": 0.0037734204758173018,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 6.4147597048431635,
+              "prominence": 1.4844666740303953,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 6.923346791416407,
+              "prominence": 0.5407312399940618,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.645212333649397,
+              "prominence": 0.15350235673529272,
+              "passes_default_prominence": false
+            }
+          ],
+          "prominence_sensitivity": [
+            {
+              "prominence_fraction": 0.06,
+              "events": 8,
+              "mean_motion_event_rate_per_min": 73.45033406103093
+            },
+            {
+              "prominence_fraction": 0.09,
+              "events": 8,
+              "mean_motion_event_rate_per_min": 73.45033406103093
+            },
+            {
+              "prominence_fraction": 0.12,
+              "events": 7,
+              "mean_motion_event_rate_per_min": 71.83906105436823
+            },
+            {
+              "prominence_fraction": 0.15,
+              "events": 7,
+              "mean_motion_event_rate_per_min": 71.83906105436823
+            },
+            {
+              "prominence_fraction": 0.18,
+              "events": 7,
+              "mean_motion_event_rate_per_min": 71.83906105436823
+            }
+          ]
+        }
+      ],
+      "event_matching": [
+        {
+          "methods": [
+            "farneback",
+            "lk"
+          ],
+          "tolerance_s": 0.06640603505074978,
+          "matched_events": 7,
+          "farneback_only_s": [],
+          "other_only_s": [
+            1.6652125576511025,
+            5.668285110034049
+          ]
+        },
+        {
+          "methods": [
+            "farneback",
+            "ensemble"
+          ],
+          "tolerance_s": 0.06640603505074978,
+          "matched_events": 7,
+          "farneback_only_s": [],
+          "other_only_s": [
+            1.6488065226003528,
+            5.635473039932549
+          ]
+        }
+      ],
+      "original_method_agreement": [
+        {
+          "movie": "20kPa.tif",
+          "motion_event_rates": {
+            "farneback": 68.52794861316141,
+            "lk": 80.24858077132852,
+            "ensemble": 80.69575937236905
+          },
+          "span_per_min": 12.16781075920764,
+          "flagged": true,
+          "interpretation": "Descriptive method disagreement; no method is designated ground truth"
+        }
+      ]
+    },
+    {
+      "movie": "30kPa",
+      "methods": [
+        {
+          "method": "farneback",
+          "export_replayed": true,
+          "events": 11,
+          "mean_motion_event_rate_per_min": 81.9901500671591,
+          "event_times_s": [
+            0.48423914704471827,
+            1.2229090323671699,
+            1.9615789176896214,
+            2.683833916671574,
+            3.389674029313028,
+            4.1119290282949805,
+            4.867013799957931,
+            5.622098571620882,
+            6.344353570602834,
+            7.083023455925286,
+            7.8052784549072385
+          ],
+          "default_prominence_threshold": 0.31831801022109185,
+          "span_floor": 0.14757382258688512,
+          "residual_noise_floor": 0.31831801022109185,
+          "candidate_peaks": [
+            {
+              "time_s": 0.48423914704471827,
+              "prominence": 0.9947851844478717,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.2229090323671699,
+              "prominence": 1.3077891842911202,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.9615789176896214,
+              "prominence": 0.9195053236961499,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 2.683833916671574,
+              "prominence": 1.1984440241148977,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.389674029313028,
+              "prominence": 1.1750686531006485,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.1119290282949805,
+              "prominence": 1.2169198472989768,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.867013799957931,
+              "prominence": 1.091812489111884,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.146066867746413,
+              "prominence": 0.002439091031337881,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 5.622098571620882,
+              "prominence": 1.3910491217761622,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 6.344353570602834,
+              "prominence": 1.0238190798931162,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 6.656236411072314,
+              "prominence": 0.0004614831847009615,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 7.083023455925286,
+              "prominence": 1.1114219268611647,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.8052784549072385,
+              "prominence": 1.3871568831578511,
+              "passes_default_prominence": true
+            }
+          ],
+          "prominence_sensitivity": [
+            {
+              "prominence_fraction": 0.06,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 81.9901500671591
+            },
+            {
+              "prominence_fraction": 0.09,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 81.9901500671591
+            },
+            {
+              "prominence_fraction": 0.12,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 81.9901500671591
+            },
+            {
+              "prominence_fraction": 0.15,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 81.9901500671591
+            },
+            {
+              "prominence_fraction": 0.18,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 81.9901500671591
+            }
+          ]
+        },
+        {
+          "method": "lk",
+          "export_replayed": true,
+          "events": 11,
+          "mean_motion_event_rate_per_min": 82.02347658458082,
+          "event_times_s": [
+            0.48423914704471827,
+            1.2393239187076688,
+            1.9779938040301204,
+            2.700248803012073,
+            3.389674029313028,
+            4.1119290282949805,
+            4.88342868629843,
+            5.622098571620882,
+            6.360768456943333,
+            7.083023455925286,
+            7.8052784549072385
+          ],
+          "default_prominence_threshold": 0.2812319256226062,
+          "span_floor": 0.15419635748753818,
+          "residual_noise_floor": 0.2812319256226062,
+          "candidate_peaks": [
+            {
+              "time_s": 0.48423914704471827,
+              "prominence": 0.994858862274825,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.2393239187076688,
+              "prominence": 1.4618453119193098,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.9779938040301204,
+              "prominence": 1.024050436669444,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 2.700248803012073,
+              "prominence": 1.3004447398884436,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.389674029313028,
+              "prominence": 1.2238285111021217,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.1119290282949805,
+              "prominence": 1.1329412036589657,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.88342868629843,
+              "prominence": 1.6398349361802154,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.622098571620882,
+              "prominence": 1.3549087900461576,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 6.360768456943333,
+              "prominence": 1.0908043233617124,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.083023455925286,
+              "prominence": 1.0932881160117764,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.32924675103277,
+              "prominence": 0.006391878416532104,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 7.8052784549072385,
+              "prominence": 1.4115030641378765,
+              "passes_default_prominence": true
+            }
+          ],
+          "prominence_sensitivity": [
+            {
+              "prominence_fraction": 0.06,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 82.02347658458082
+            },
+            {
+              "prominence_fraction": 0.09,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 82.02347658458082
+            },
+            {
+              "prominence_fraction": 0.12,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 82.02347658458082
+            },
+            {
+              "prominence_fraction": 0.15,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 82.02347658458082
+            },
+            {
+              "prominence_fraction": 0.18,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 82.02347658458082
+            }
+          ]
+        },
+        {
+          "method": "ensemble",
+          "export_replayed": true,
+          "events": 11,
+          "mean_motion_event_rate_per_min": 82.01427689986865,
+          "event_times_s": [
+            0.48423914704471827,
+            1.2393239187076688,
+            1.9779938040301204,
+            2.683833916671574,
+            3.389674029313028,
+            4.1119290282949805,
+            4.88342868629843,
+            5.622098571620882,
+            6.344353570602834,
+            7.083023455925286,
+            7.8052784549072385
+          ],
+          "default_prominence_threshold": 0.28799197102184937,
+          "span_floor": 0.14082109850044222,
+          "residual_noise_floor": 0.28799197102184937,
+          "candidate_peaks": [
+            {
+              "time_s": 0.48423914704471827,
+              "prominence": 0.8423515844335491,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.2393239187076688,
+              "prominence": 1.2981237903842613,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.9779938040301204,
+              "prominence": 1.0295329309748038,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 2.683833916671574,
+              "prominence": 1.1789624160687522,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.389674029313028,
+              "prominence": 1.2212107188027854,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.1119290282949805,
+              "prominence": 1.0758132785931234,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.88342868629843,
+              "prominence": 1.3298491938281707,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.622098571620882,
+              "prominence": 1.159973623113479,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 6.344353570602834,
+              "prominence": 1.0314153832076973,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.083023455925286,
+              "prominence": 1.073306063802118,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.8052784549072385,
+              "prominence": 1.266514438366712,
+              "passes_default_prominence": true
+            }
+          ],
+          "prominence_sensitivity": [
+            {
+              "prominence_fraction": 0.06,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 82.01427689986865
+            },
+            {
+              "prominence_fraction": 0.09,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 82.01427689986865
+            },
+            {
+              "prominence_fraction": 0.12,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 82.01427689986865
+            },
+            {
+              "prominence_fraction": 0.15,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 82.01427689986865
+            },
+            {
+              "prominence_fraction": 0.18,
+              "events": 11,
+              "mean_motion_event_rate_per_min": 82.01427689986865
+            }
+          ]
+        },
+        {
+          "method": "signed_displacement",
+          "export_replayed": true,
+          "events": 10,
+          "mean_motion_event_rate_per_min": 84.75377451926279,
+          "event_times_s": [
+            0.869988976046443,
+            1.5922439750283957,
+            2.2324245423078537,
+            2.9546795412898064,
+            3.7425940856337547,
+            4.4484341982752085,
+            5.18710408359766,
+            5.9586037416011095,
+            6.697273626923561,
+            7.288209535181522
+          ],
+          "default_prominence_threshold": 0.31549034339369847,
+          "span_floor": 0.17667226363925506,
+          "residual_noise_floor": 0.31549034339369847,
+          "candidate_peaks": [
+            {
+              "time_s": 0.14773397706449032,
+              "prominence": 0.09185611801535845,
+              "passes_default_prominence": false
+            },
+            {
+              "time_s": 0.869988976046443,
+              "prominence": 1.2259602750607526,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 1.5922439750283957,
+              "prominence": 1.5807855861456497,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 2.2324245423078537,
+              "prominence": 1.3565733796286628,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 2.9546795412898064,
+              "prominence": 1.3336811152263113,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 3.7425940856337547,
+              "prominence": 1.435907048946826,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 4.4484341982752085,
+              "prominence": 1.3639474226931798,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.18710408359766,
+              "prominence": 1.4248459535910398,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 5.9586037416011095,
+              "prominence": 1.4805149005711664,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 6.697273626923561,
+              "prominence": 1.3966231928906097,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 7.288209535181522,
+              "prominence": 1.3048404142558647,
+              "passes_default_prominence": true
+            },
+            {
+              "time_s": 8.026879420503974,
+              "prominence": 0.08383338183729977,
+              "passes_default_prominence": false
+            }
+          ],
+          "prominence_sensitivity": [
+            {
+              "prominence_fraction": 0.06,
+              "events": 10,
+              "mean_motion_event_rate_per_min": 84.75377451926279
+            },
+            {
+              "prominence_fraction": 0.09,
+              "events": 10,
+              "mean_motion_event_rate_per_min": 84.75377451926279
+            },
+            {
+              "prominence_fraction": 0.12,
+              "events": 10,
+              "mean_motion_event_rate_per_min": 84.75377451926279
+            },
+            {
+              "prominence_fraction": 0.15,
+              "events": 10,
+              "mean_motion_event_rate_per_min": 84.75377451926279
+            },
+            {
+              "prominence_fraction": 0.18,
+              "events": 10,
+              "mean_motion_event_rate_per_min": 84.75377451926279
+            }
+          ]
+        }
+      ],
+      "event_matching": [
+        {
+          "methods": [
+            "farneback",
+            "lk"
+          ],
+          "tolerance_s": 0.06641488634049893,
+          "matched_events": 11,
+          "farneback_only_s": [],
+          "other_only_s": []
+        },
+        {
+          "methods": [
+            "farneback",
+            "ensemble"
+          ],
+          "tolerance_s": 0.06641488634049893,
+          "matched_events": 11,
+          "farneback_only_s": [],
+          "other_only_s": []
+        }
+      ],
+      "original_method_agreement": [
+        {
+          "movie": "30kPa.tif",
+          "motion_event_rates": {
+            "farneback": 81.9901500671591,
+            "lk": 82.02347658458082,
+            "ensemble": 82.01427689986865
+          },
+          "span_per_min": 0.03332651742171322,
+          "flagged": false,
+          "interpretation": "Descriptive method disagreement; no method is designated ground truth"
+        }
+      ]
+    }
+  ]
+}
