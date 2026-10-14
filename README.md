@@ -4,6 +4,21 @@
 
 MyoTrace is a Python toolkit for extracting quantitative motion and beat-level mechanical features from cardiac-cell or tissue video and TIFF data. It also provides optional multimodal feature fusion.
 
+
+<!-- VALIDATION_PRODUCT_STATUS:BEGIN -->
+## Validation and product completion status
+
+**Reviewed 2026-10-14; implementation base `6772d2e6db11`.** **Status: Analytical accuracy recovery; public recordings lack independent beat/force truth.** This is an evidence-backed scope assessment, not a percentage-complete estimate or a declaration that the product is finished.
+
+| Area | Current evidence / remaining gate |
+|---|---|
+| Software / operational checks | Automated test sources and CI definitions are present; this documentation audit does not report a new algorithm/data-validation run. |
+| Scientific or domain evidence | Noise-aware detection reduced independent generated-trace failures from 56 to 8 of 432; signed displacement passed 48 generated-video cases. Public recordings execute/repeat, but full-field multimode projections and method disagreement remain; biological beats and force are not qualified. |
+| Remaining for the declared product scope | Acquire independent beat/timing and instrument-calibrated mechanical references with ROI/acquisition metadata; resolve multimode/drift/unsigned double-event failures; validate across batches/labs and test-retest; add bounded-memory streaming for large acquisitions. |
+
+Evidence and limits: [repository report](docs/ACCURACY_RECOVERY.md). The [organization status index](https://github.com/Virelion-Biotech/Virelion-HeartTwin/blob/main/docs/STACK_VALIDATION_STATUS.md) separates software, numerical, data-readiness and empirical qualification. Code/schema execution or a completed download is not a substitute for endpoint-specific validation.
+<!-- VALIDATION_PRODUCT_STATUS:END -->
+
 ## What it contains
 
 - Farneback and Lucas–Kanade optical-flow analysis.
