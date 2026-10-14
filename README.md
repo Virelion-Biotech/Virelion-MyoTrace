@@ -12,11 +12,11 @@ MyoTrace is a Python toolkit for extracting quantitative motion and beat-level m
 
 | Area | Current evidence / remaining gate |
 |---|---|
-| Software / operational checks | Automated test sources and CI definitions are present; this documentation audit does not report a new algorithm/data-validation run. |
+| Software / operational checks | Automated test sources and CI definitions are present; the imported Colab run completed in 25m45s, with 53 artifact hashes verified and all 12 exported traces replayed locally. |
 | Scientific or domain evidence | Noise-aware detection reduced independent generated-trace failures from 56 to 8 of 432; signed displacement passed 48 generated-video cases. Public recordings execute/repeat, but full-field multimode projections and method disagreement remain; biological beats and force are not qualified. |
 | Remaining for the declared product scope | Acquire independent beat/timing and instrument-calibrated mechanical references with ROI/acquisition metadata; resolve multimode/drift/unsigned double-event failures; validate across batches/labs and test-retest; add bounded-memory streaming for large acquisitions. |
 
-Evidence and limits: [repository report](docs/ACCURACY_RECOVERY.md). The [organization status index](https://github.com/Virelion-Biotech/Virelion-HeartTwin/blob/main/docs/STACK_VALIDATION_STATUS.md) separates software, numerical, data-readiness and empirical qualification. Code/schema execution or a completed download is not a substitute for endpoint-specific validation.
+Evidence and limits: [repository report](docs/ACCURACY_RECOVERY.md) and [2026-10-14 Colab results / disagreement diagnosis](docs/SARCASM_COLAB_2026-10-14.md). The [organization status index](https://github.com/Virelion-Biotech/Virelion-HeartTwin/blob/main/docs/STACK_VALIDATION_STATUS.md) separates software, numerical, data-readiness and empirical qualification. Code/schema execution or a completed download is not a substitute for endpoint-specific validation.
 <!-- VALIDATION_PRODUCT_STATUS:END -->
 
 ## What it contains

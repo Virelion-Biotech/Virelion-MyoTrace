@@ -1,0 +1,2 @@
+COMMAND ["/content/07_MyoTrace_SarcAsM_v1/venv/bin/python", "/content/07_MyoTrace_SarcAsM_v1/Virelion-MyoTrace/scripts/validate_recovery_cpu.py", "--out", "/content/drive/MyDrive/HeartTwinValidation/07_MyoTrace_SarcAsM_v1/results/recovery"]
+{"development_legacy": {"cases": 432, "failed": 64}, "development_noise_aware": {"cases": 432, "failed": 27}, "confirmation_legacy": {"cases": 432, "failed": 56}, "confirmation_noise_aware": {"cases": 432, "failed": 8}, "signed_video": {"cases": 48, "failed": 0}}

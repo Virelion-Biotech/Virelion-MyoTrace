@@ -1,0 +1,11 @@
+{
+  "archive_sha256": "9db9a90bb1178bd11c00096c81733960c3d09728e8fe1aefdc660d470a6a723a",
+  "source_commit": "6772d2e6db11a2ef46f2bef16a91e5c5e3d3d7a4",
+  "archive_members": 54,
+  "payload_hashes_verified": 53,
+  "algorithm_source_hashes_match_current_checkout": 34,
+  "exported_traces_replayed": 12,
+  "optical_flow_recomputed_from_raw_movies": false,
+  "decision": "No detector change: extra LK/ensemble peaks explain 20kPa disagreement; no independent labels determine which selections are correct.",
+  "biological_accuracy_established": false
+}

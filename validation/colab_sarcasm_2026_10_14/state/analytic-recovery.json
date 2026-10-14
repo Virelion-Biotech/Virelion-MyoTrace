@@ -1,0 +1,12 @@
+{
+  "artifacts": {
+    "logs/analytic-recovery.txt": "eaa9e949555800337588f3b7b95d9be0002442f631bbfe848144f7fbcee6025e",
+    "results/analytic-recovery-execution.json": "8486c34fa80cc4028ad87a65814aebef692dc5f1d20180351279088be7779b28",
+    "results/recovery/results.json": "04f427dee1158c31383b4a1a54088da7bda529b218a056c2087ce864a2c15488"
+  },
+  "identity": "646d6919ec9766e6fdf69cf84c7cbe118c31feb6f49b58236c308d07323ef5c7",
+  "result": {
+    "log": "logs/analytic-recovery.txt",
+    "returncode": 0
+  }
+}
