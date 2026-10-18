@@ -8,9 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import hashlib
 from pathlib import Path
-import urllib.request
 
 import numpy as np
 import cv2
@@ -19,6 +17,7 @@ from myotrace.pipeline import analyze_video
 from myotrace.flow import FlowConfig
 from myotrace.io import load_tiff_stack
 from myotrace.serialization import json_safe
+from myotrace.source_integrity import verified_source
 
 
 def run(manifest_path, data, out):
@@ -29,13 +28,15 @@ def run(manifest_path, data, out):
     rows = []
     for source in manifest["movies"]:
         path = data / source["name"]
-        if not path.exists():
-            with urllib.request.urlopen(source["url"], timeout=120) as response, path.open("wb") as target:
-                while chunk := response.read(1024 * 1024):
-                    target.write(chunk)
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        if digest != source["sha256"]:
-            raise ValueError(f"Source checksum mismatch: {path}")
+        try:
+            receipt = verified_source(source, path)
+        except Exception as exc:
+            (out / "SOURCE_FAILURE.json").write_text(json.dumps({
+                "movie": source["name"], "source_url": source["url"],
+                "expected_sha256": source["sha256"], "expected_size": source["size"],
+                "status": "FAILED", "error": str(exc),
+            }, indent=2) + "\n")
+            raise
         loaded = load_tiff_stack(path)
         for method, mode in (
             ("farneback", "motion"),
@@ -63,6 +64,7 @@ def run(manifest_path, data, out):
                         qc=result.qc.__dict__,
                         summary=result.summary,
                         provenance=result.provenance,
+                        source_receipt=receipt,
                     )
                 )
             except Exception as exc:
