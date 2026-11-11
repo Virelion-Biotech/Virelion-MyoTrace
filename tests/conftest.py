@@ -1,4 +1,8 @@
 """Avoid thread oversubscription on shared CPU test runners."""
-import cv2
+try:
+    import cv2
+except ImportError:  # OpenCV is optional ([video] extra); video tests skip themselves.
+    cv2 = None
 
-cv2.setNumThreads(1)
+if cv2 is not None:
+    cv2.setNumThreads(1)
