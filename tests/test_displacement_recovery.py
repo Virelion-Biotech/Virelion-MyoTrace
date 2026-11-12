@@ -1,10 +1,11 @@
 import json
 import sys
 
-import cv2
 import numpy as np
 import pytest
-import tifffile
+
+cv2 = pytest.importorskip("cv2", reason="video tests require the [video] extra")
+tifffile = pytest.importorskip("tifffile", reason="TIFF tests require the [tiff] extra")
 
 from myotrace import signed_displacement_trace, analyze_video
 from myotrace.flow import FlowConfig
