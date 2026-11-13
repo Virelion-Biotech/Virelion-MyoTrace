@@ -90,7 +90,7 @@ jobs:
         env:
           OPENBLAS_NUM_THREADS: 1
           OMP_NUM_THREADS: 1
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: cpu-analytical-validation
           path: |
@@ -110,7 +110,7 @@ jobs:
         env:
           OPENBLAS_NUM_THREADS: 1
           OMP_NUM_THREADS: 1
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: public-video-execution
