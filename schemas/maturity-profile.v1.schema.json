@@ -1,0 +1,16 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema",
+ "$id":"https://virelionbiotech.org/schemas/maturity-profile.v1.schema.json",
+ "title":"MyoTrace multidimensional cardiac maturity profile",
+ "type":"object",
+ "required":["schema_version","profile_version","sample_id","timepoint","dimensions","context","composite","interpretation_policy","profile_sha256"],
+ "properties":{
+  "schema_version":{"const":"1.0"},"profile_version":{"type":"string"},"sample_id":{"type":"string"},"timepoint":{"type":"string"},
+  "dimensions":{"type":"object","required":["sarcomeric_organization","contractility_beat_mechanics","electrophysiological_maturity","calcium_transient_maturity","metabolic_maturation","cell_cycle_proliferation","electrical_coupling_synchrony","tissue_architecture_alignment"]},
+  "context":{"type":"object"},
+  "composite":{"type":"object","required":["status","score","reason"],"properties":{"status":{"const":"not_computed"},"score":{"type":"null"},"reason":{"type":"string"}}},
+  "interpretation_policy":{"type":"object","required":["missingness_is_explicit","early_marker_expression_does_not_equal_mature_function","video_does_not_infer_electrophysiology_calcium_or_metabolism","motion_index_is_not_force_without_calibration"]},
+  "profile_sha256":{"type":"string","pattern":"^[a-fA-F0-9]{64}$"}
+ },
+ "additionalProperties":false
+}
