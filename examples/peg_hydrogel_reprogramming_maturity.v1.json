@@ -1,0 +1,44 @@
+{
+ "schema_version":"1.0",
+ "example_status":"synthetic_fixture_not_biological_data",
+ "study_context":{
+  "model":"PEG-hydrogel fibroblast-to-cardiomyocyte reprogramming challenge",
+  "description":"Illustrates why early colony formation/marker expression and later functional measurements are separate endpoints.",
+  "synthetic":true,
+  "no_biological_or_therapeutic_inference":true
+ },
+ "profiles":[
+  {
+   "profile_version":"myotrace-maturity-profile/1.0.0",
+   "sample_id":"PEG-SYNTH-001",
+   "timepoint":"day_7_early_colony_formation",
+   "dimensions":{
+    "cell_cycle_proliferation":{"dimension":"cell_cycle_proliferation","status":"measured","value":0.24,"unit":"fraction","modality":"imaging","method":"synthetic fixture: positive nuclei divided by counted nuclei","calibration":{"method":"synthetic known-count fixture"},"sample_id":"PEG-SYNTH-001","timepoint":"day_7_early_colony_formation","qc":{"status":"synthetic_fixture"},"source_artifact_sha256":"2584d097917087a5485478212cda4a8a867ce2b2184ec467e1ecbd65e7408419"},
+    "sarcomeric_organization":{"dimension":"sarcomeric_organization","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"early marker expression is not equivalent to organized sarcomeres"},
+    "contractility_beat_mechanics":{"dimension":"contractility_beat_mechanics","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"no later mechanical recording at this timepoint"},
+    "electrophysiological_maturity":{"dimension":"electrophysiological_maturity","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"no electrical measurement"},
+    "calcium_transient_maturity":{"dimension":"calcium_transient_maturity","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"no calcium imaging"},
+    "metabolic_maturation":{"dimension":"metabolic_maturation","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"no metabolic assay"},
+    "electrical_coupling_synchrony":{"dimension":"electrical_coupling_synchrony","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"no electrical coupling measurement"},
+    "tissue_architecture_alignment":{"dimension":"tissue_architecture_alignment","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"no architecture analysis"}
+   },
+   "composite":{"status":"not_computed","score":null,"reason":"no justified weighting model"}
+  },
+  {
+   "profile_version":"myotrace-maturity-profile/1.0.0",
+   "sample_id":"PEG-SYNTH-001",
+   "timepoint":"day_28_later_mechanical_assessment",
+   "dimensions":{
+    "cell_cycle_proliferation":{"dimension":"cell_cycle_proliferation","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"not measured at later timepoint"},
+    "sarcomeric_organization":{"dimension":"sarcomeric_organization","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"not measured at later timepoint"},
+    "contractility_beat_mechanics":{"dimension":"contractility_beat_mechanics","status":"proxy","value":0.61,"unit":"motion_index","modality":"mechanical","method":"synthetic optical-flow motion index","calibration":null,"sample_id":"PEG-SYNTH-001","timepoint":"day_28_later_mechanical_assessment","qc":{"status":"synthetic_fixture"},"source_artifact_sha256":"2584d097917087a5485478212cda4a8a867ce2b2184ec467e1ecbd65e7408419","interpretation_limit":"motion index is not force and motion events are not verified cardiac beats"},
+    "electrophysiological_maturity":{"dimension":"electrophysiological_maturity","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"no electrical measurement"},
+    "calcium_transient_maturity":{"dimension":"calcium_transient_maturity","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"no calcium imaging"},
+    "metabolic_maturation":{"dimension":"metabolic_maturation","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"no metabolic assay"},
+    "electrical_coupling_synchrony":{"dimension":"electrical_coupling_synchrony","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"no electrical coupling measurement"},
+    "tissue_architecture_alignment":{"dimension":"tissue_architecture_alignment","status":"not_measured","value":null,"unit":null,"modality":null,"method":null,"calibration":null,"sample_id":null,"timepoint":null,"qc":null,"source_artifact_sha256":null,"reason":"no architecture analysis"}
+   },
+   "composite":{"status":"not_computed","score":null,"reason":"no justified weighting model"}
+  }
+ ]
+}

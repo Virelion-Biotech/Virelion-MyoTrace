@@ -106,3 +106,8 @@ Optical-flow outputs depend on image quality, frame rate, motion, preprocessing,
 ## License
 
 GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later). See `LICENSE`.
+
+
+## Multidimensional cardiomyocyte maturity profile v1
+
+The new `fusion.maturity_profile` contract records eight independent maturity dimensions with modality, units, calibration, sample/timepoint, QC and source hashes. Video-only profiles populate only a motion-derived mechanical proxy; electrophysiology, calcium, metabolism, cell cycle, sarcomeric organization and architecture remain explicitly unmeasured. Static videos produce null/not-estimable mechanics. No composite maturity score is computed. See [profile contract](docs/MULTIDIMENSIONAL_MATURITY_PROFILE.md).
